@@ -15,7 +15,7 @@ import Card from "@/components/authentication-forms/Card";
 import { registerFormSchema as formSchema } from "@/schema";
 import { Link, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setToken } from "@/state/TokenSlice";
+import { setRefreshToken, setToken } from "@/state/TokenSlice";
 import { useEffect } from "react";
 import { API_URL } from "@/config";
 
@@ -35,6 +35,7 @@ function Registration() {
   useEffect(() => {
     if (localStorage.getItem("token") !== null) {
       dispatch(setToken(localStorage.getItem("token")));
+      dispatch(setRefreshToken(localStorage.getItem("refreshToken")));
       navigate("/app");
     }
   }, []);
@@ -53,7 +54,9 @@ function Registration() {
           throw new Error("Token is undefined");
         } else {
           dispatch(setToken(data.token));
+          dispatch(setRefreshToken(data.refresh_token));
           localStorage.setItem("token", data.token);
+          localStorage.setItem("refreshToken", data.refresh_token);
           navigate("/app");
         }
       })

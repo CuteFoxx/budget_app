@@ -3,7 +3,7 @@ import SideNavLink from "./SideNavLink";
 
 function SideNav() {
   return (
-    <aside className="py-4 flex flex-col gap-2 dark:border-neutral-800 border-neutral-100 border-r-1 h-full">
+    <aside className="py-4 flex flex-col gap-2 dark:border-neutral-800 border-neutral-100 border-r-1 w-fit">
       <SideNavLink to="/app" title="Overview">
         <LayoutGrid />
       </SideNavLink>
