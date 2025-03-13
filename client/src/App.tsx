@@ -13,7 +13,7 @@ function App() {
           <Menu />
           <ModeToggle />
         </Header>
-        <main className="flex flex-col grow app-container h-full md:grid md:grid-cols-[12rem_1fr]">
+        <main className="flex flex-col grow app-container h-full md:grid md:grid-cols-[auto_1fr] lg:grid-cols-[12rem_1fr]">
           <SideNav />
           <div className="p-4 md:p-8">
             <Outlet />

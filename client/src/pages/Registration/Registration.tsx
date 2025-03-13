@@ -34,6 +34,7 @@ function Registration() {
 
   useEffect(() => {
     if (localStorage.getItem("token") !== null) {
+      dispatch(setToken(localStorage.getItem("token")));
       navigate("/app");
     }
   }, []);

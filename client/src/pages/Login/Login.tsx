@@ -11,14 +11,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { API_URL } from "@/config";
 import { loginFormSchema } from "@/schema";
+import { setToken } from "@/state/TokenSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -30,6 +33,7 @@ function Login() {
 
   useEffect(() => {
     if (localStorage.getItem("token") !== null) {
+      dispatch(setToken(localStorage.getItem("token")));
       navigate("/app");
     }
   }, []);
@@ -50,7 +54,10 @@ function Login() {
         if (data.token === undefined || data.token === null) {
           throw new Error("Token is undefined");
         } else {
+          console.log(data);
+
           localStorage.setItem("token", data.token);
+          dispatch(setToken(data.token));
           navigate("/app");
         }
       })

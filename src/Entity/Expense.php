@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -26,6 +28,15 @@ class Expense
     #[ORM\ManyToOne(inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[Groups(["expense"])]
+    #[ORM\ManyToOne(inversedBy: 'expense')]
+    private ?ExpenseCategory $expenseCategory = null;
+
+
+
+
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -65,6 +76,18 @@ class Expense
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getExpenseCategory(): ?ExpenseCategory
+    {
+        return $this->expenseCategory;
+    }
+
+    public function setExpenseCategory(?ExpenseCategory $expenseCategory): static
+    {
+        $this->expenseCategory = $expenseCategory;
 
         return $this;
     }

@@ -12,7 +12,7 @@ function Incomes() {
   return (
     <section>
       <Card>
-        <div className="flex items-center justify-between">
+        <div className="card-heading">
           <h2>Incomes</h2>
           <FormDialog buttonText={buttonInner} title="Add Income">
             test
