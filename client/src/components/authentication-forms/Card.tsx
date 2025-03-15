@@ -7,7 +7,7 @@ function Card({ children, ...props }: CardProps) {
 
   return (
     <div
-      className={`shadow-xs dark:shadow-md dark:shadow-neutral-800/20 border-neutral-100 dark:border-neutral-800 border-1 p-4 md:p-8 rounded-lg ${
+      className={`border-1 border-neutral-300/60 shadow-lg dark:shadow-neutral-800/20  dark:border-neutral-800 p-4 md:p-8 rounded-lg ${
         className ?? ""
       }`}
       {...rest}

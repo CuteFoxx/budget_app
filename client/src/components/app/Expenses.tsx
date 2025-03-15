@@ -2,8 +2,8 @@ import { Plus } from "lucide-react";
 import Card from "../authentication-forms/Card";
 import { FormDialog } from "../ui/FormDialog";
 import AddExpenseForm from "./AddExpenseForm";
-import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { API_URL } from "@/config";
 import { Expense } from "@/types/Expense";
 import ExpenseComponent from "./Expense";
@@ -14,17 +14,21 @@ import {
   TableRow,
   TableBody,
 } from "@/components/ui/table";
-import refreshTokenFunction from "@/utils/refreshToken";
-import { setRefreshToken, setToken } from "@/state/TokenSlice";
-import { useNavigate } from "react-router";
+import useFetch from "@/hooks/UseFetch";
+import Loader from "../ui/loader";
 
 function Expenses() {
   // TODO REMOVE ANY
   const token = useSelector((state: any) => state.token.token);
   const refreshToken = useSelector((state: any) => state.token.refreshToken);
-  const [expenses, setExpenses] = useState<Expense[]>();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  const { data, isLoading } = useFetch<{
+    expenses: Expense[];
+  }>({
+    url: `${API_URL}/expenses`,
+    tokens: { token, refreshToken },
+  });
 
   const buttonInner = (
     <>
@@ -33,78 +37,40 @@ function Expenses() {
   );
 
   useEffect(() => {
-    fetch(`${API_URL}/expenses`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        switch (response.status) {
-          case 200:
-            return response.json();
-          case 401:
-            const {
-              token,
-              refreshToken: refreshT,
-              isAuthenticated,
-            } = refreshTokenFunction({
-              refresh_token: refreshToken,
-            });
-            if (!isAuthenticated) {
-              localStorage.removeItem("token");
-              localStorage.removeItem("refreshToken");
-              dispatch(setToken(""));
-              dispatch(setRefreshToken(""));
-              navigate("/login");
-              return;
-            }
-            localStorage.setItem("token", token);
-            localStorage.setItem("refreshToken", refreshT);
-            dispatch(setToken(token));
-            dispatch(setRefreshToken(refreshT));
-
-            break;
-        }
-      })
-      .then((data) => {
-        const parsed = JSON.parse(data);
-        setExpenses(parsed.expenses as Expense[]);
-      })
-      .catch((error) => {});
-  }, []);
+    if (data != null) {
+      setExpenses(data?.expenses);
+    }
+  });
 
   return (
-    <>
+    <Card className="relative overflow-hidden">
+      <Loader isLoading={isLoading} />
       {expenses && (
-        <section>
-          <Card>
-            <div className="card-heading">
-              <h2>Expenses</h2>
+        <>
+          <div className="card-heading">
+            <h2>Expenses</h2>
 
-              <FormDialog buttonText={buttonInner} title="Add Expense">
-                <AddExpenseForm />
-              </FormDialog>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Category</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {expenses.map((expense: Expense) => (
-                  <ExpenseComponent key={expense.id} expense={expense} />
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </section>
+            <FormDialog buttonText={buttonInner} title="Add Expense">
+              <AddExpenseForm />
+            </FormDialog>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Category</TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {expenses?.map((expense: Expense) => (
+                <ExpenseComponent key={expense.id} expense={expense} />
+              ))}
+            </TableBody>
+          </Table>
+        </>
       )}
-    </>
+    </Card>
   );
 }
 

@@ -9,6 +9,7 @@ import Landing from "@/pages/Landing/Landing.tsx";
 import Registration from "@/pages/Registration/Registration.tsx";
 import Login from "@/pages/Login/Login.tsx";
 import Overview from "@/pages/Overview/Overview.tsx";
+import { Settings } from "lucide-react";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="/app" element={<App />} errorElement={<Error />}>
         <Route index element={<Overview />} />
+        <Route path="/app/settings" element={<Settings />} />
       </Route>
     </>
   )
