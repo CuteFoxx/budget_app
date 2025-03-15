@@ -19,9 +19,7 @@ import Loader from "../ui/Loader";
 function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const { data, isLoading } = useFetch<{
-    expenses: Expense[];
-  }>({
+  const { data, isLoading } = useFetch<Expense[]>({
     url: `${API_URL}/expenses`,
   });
 
@@ -33,7 +31,7 @@ function Expenses() {
 
   useEffect(() => {
     if (data != null) {
-      setExpenses(data?.expenses);
+      setExpenses(data);
     }
   });
 

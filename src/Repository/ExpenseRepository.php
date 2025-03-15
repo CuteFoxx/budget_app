@@ -8,6 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use function Symfony\Component\Clock\now;
+
 /**
  * @extends ServiceEntityRepository<Expense>
  */
@@ -35,11 +37,23 @@ class ExpenseRepository extends ServiceEntityRepository
         $expense->setName($data['name']);
         $expense->setUser($user);
         $expense->setExpenseCategory($expenseCategory);
+        $expense->setCreated(now());
 
         $this->getEntityManager()->persist($expense);
         $this->getEntityManager()->flush();
 
         return $expense;
+    }
+
+    public function getNewest($user)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.user = :val')
+            ->setParameter('val', $user->getId())
+            ->orderBy('e.created', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     //    /**

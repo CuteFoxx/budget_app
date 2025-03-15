@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ExpenseRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,22 +20,25 @@ final class ExpenseController extends AbstractController
 
     private ExpenseRepository $expenseRepository;
 
+    private LoggerInterface $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage, SerializerInterface $serializer, ExpenseRepository $expenseRepository)
+    public function __construct(TokenStorageInterface $tokenStorage, SerializerInterface $serializer, ExpenseRepository $expenseRepository, LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
         $this->serializer = $serializer;
         $this->expenseRepository = $expenseRepository;
+        $this->logger = $logger;
     }
 
     #[Route('api/expenses', name: 'app_expense')]
-    public function index(): JsonResponse
+    public function index(ExpenseRepository $expenseRepository): JsonResponse
     {
         $token = $this->tokenStorage->getToken();
 
         $user = $token->getUser();
+        $expenses = $expenseRepository->getNewest($user);
 
-        return $this->json($this->serializer->serialize($user, 'json',  ['groups' => ['expense']]));
+        return $this->json($this->serializer->serialize($expenses, 'json',  ['groups' => ['expense']]));
     }
 
     #[Route('api/expenses/categories', name: 'app_expense_categories')]
@@ -63,6 +67,6 @@ final class ExpenseController extends AbstractController
             return new JsonResponse(json_encode($expense));
         }
 
-        return new JsonResponse('test');
+        return new JsonResponse();
     }
 }

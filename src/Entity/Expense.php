@@ -3,10 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+
+use function Symfony\Component\Clock\now;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 class Expense
@@ -32,6 +36,9 @@ class Expense
     #[Groups(["expense", "expenseCategories"])]
     #[ORM\ManyToOne(inversedBy: 'expense')]
     private ?ExpenseCategory $expenseCategory = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    private ?\DateTimeInterface $created = null;
 
 
 
@@ -88,6 +95,18 @@ class Expense
     public function setExpenseCategory(?ExpenseCategory $expenseCategory): static
     {
         $this->expenseCategory = $expenseCategory;
+
+        return $this;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(\DateTimeInterface $created): static
+    {
+        $this->created = $created;
 
         return $this;
     }
