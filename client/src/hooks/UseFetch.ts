@@ -1,7 +1,5 @@
 import { API_URL } from "@/config";
-import { setRefreshToken, setToken } from "@/state/TokenSlice";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
 type UseFetchProps = {
@@ -18,61 +16,48 @@ type UseFetchReturn<T> = {
 };
 
 function useFetch<T>({ url, tokens }: UseFetchProps): UseFetchReturn<T> {
+  const nav = useNavigate();
   const [data, setData] = useState<T | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const nav = useNavigate();
-  const dispatch = useDispatch();
 
   function fetchData(url: string, token?: string) {
     return fetch(url, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token ? token : tokens.token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
   }
 
   function refreshToken() {
-    fetch(`${API_URL}/token/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: tokens.refreshToken,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("refreshToken", data.refresh_token);
-        dispatch(setToken(data.token));
-        dispatch(setRefreshToken(data.refresh_token));
+    fetchData(`${API_URL}/token/refresh`)
+      .then((res) => {
+        if (!res.ok) return handleUnAuthorized;
 
-        fetchData(url, data.token)
+        fetchData(url)
           .then((res) => res.json())
           .then((data) => {
             if (typeof data === "string") {
               data = JSON.parse(data);
             }
             setData(data);
+            setIsLoading(false);
           });
       })
-      .catch(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        dispatch(setToken(""));
-        dispatch(setRefreshToken(""));
-        nav("/login");
-      });
+      .catch(() => handleUnAuthorized);
+  }
+
+  function handleUnAuthorized() {
+    localStorage.removeItem("isLoggedIn");
+    nav("/login");
   }
 
   useEffect(() => {
     fetchData(url)
       .then((res) => {
-        if (res.status === 401) {
+        if (res.status === 401 || !res.ok) {
           refreshToken();
         }
         return res.json();
@@ -82,11 +67,9 @@ function useFetch<T>({ url, tokens }: UseFetchProps): UseFetchReturn<T> {
           resData = JSON.parse(resData);
         }
         setData(resData);
+        setIsLoading(false);
       })
-      .catch((err) => {
-        refreshToken();
-      })
-      .finally(() => setIsLoading(false));
+      .catch((err) => refreshToken());
   }, []);
 
   return { data, isLoading };

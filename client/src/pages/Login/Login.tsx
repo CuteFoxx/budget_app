@@ -11,17 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { API_URL } from "@/config";
 import { loginFormSchema } from "@/schema";
-import { setRefreshToken, setToken } from "@/state/TokenSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -31,17 +28,12 @@ function Login() {
     },
   });
 
-  useEffect(() => {
-    if (localStorage.getItem("token") !== null) {
-      dispatch(setToken(localStorage.getItem("token")));
-      dispatch(setRefreshToken(localStorage.getItem("refreshToken")));
-      navigate("/app");
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
     fetch(`${API_URL}/login_check`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -50,15 +42,8 @@ function Login() {
         password: values.password,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.token === undefined || data.token === null) {
-          throw new Error("Token is undefined");
-        } else {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("refreshToken", data.refresh_token);
-          dispatch(setToken(data.token));
-          dispatch(setRefreshToken(data.refresh_token));
+      .then((response) => {
+        if (response.ok) {
           navigate("/app");
         }
       })
