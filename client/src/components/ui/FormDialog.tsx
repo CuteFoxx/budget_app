@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { JSX } from "react";
 
 type FormDialogProps = {
@@ -17,6 +18,7 @@ type FormDialogProps = {
 export function FormDialog({ children, buttonText, title }: FormDialogProps) {
   return (
     <Dialog>
+      <DialogDescription>Form dialog</DialogDescription>
       <DialogTrigger asChild>
         <Button variant="outline">{buttonText}</Button>
       </DialogTrigger>

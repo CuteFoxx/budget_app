@@ -6,6 +6,8 @@ type ExpenseProps = {
 };
 
 function Expense({ expense }: ExpenseProps) {
+  console.log(expense);
+
   return (
     <TableRow>
       <TableCell>{expense?.name ?? ""}</TableCell>

@@ -9,16 +9,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { API_URL } from "@/config";
+import useFetch from "@/hooks/UseFetch";
 import { expenseFormSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { z } from "zod";
-import axios from "axios";
+import { Combobox } from "../ui/combobox";
+import { categoryName } from "@/types/CategoryName";
 
 export default function AddExpenseForm() {
-  const token = useSelector((state: any) => state.token.token);
-
+  const { data: categories, isLoading } = useFetch<categoryName[]>({
+    url: `${API_URL}/expenses/categories`,
+  });
   const form = useForm<z.infer<typeof expenseFormSchema>>({
     resolver: zodResolver(expenseFormSchema),
     defaultValues: {
@@ -27,31 +29,25 @@ export default function AddExpenseForm() {
     },
   });
 
-  console.log(`Bearer ${token}`);
-
-  axios
-    .post("http://127.0.0.1:8000/api/expense", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response) => console.log(response.data))
-    .catch((error) => console.error("Error:", error));
-
   function onSubmit(values: z.infer<typeof expenseFormSchema>) {
-    fetch(`${API_URL}/expense`, {
+    console.log(values);
+    console.log("asdasd");
+
+    fetch(`${API_URL}/expenses/create`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? localStorage.getItem("token")}`,
       },
+      body: JSON.stringify(values),
     }).then((res) => {
       console.log(res);
     });
   }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -76,6 +72,17 @@ export default function AddExpenseForm() {
               </FormControl>
               <FormMessage />
             </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <Combobox
+              data={categories}
+              title="Category"
+              onChange={field.onChange}
+            />
           )}
         />
         <Button type="submit">Submit</Button>

@@ -2,7 +2,6 @@ import { Plus } from "lucide-react";
 import Card from "../authentication-forms/Card";
 import { FormDialog } from "../ui/FormDialog";
 import AddExpenseForm from "./AddExpenseForm";
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/config";
 import { Expense } from "@/types/Expense";
@@ -15,19 +14,15 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import useFetch from "@/hooks/UseFetch";
-import Loader from "../ui/loader";
+import Loader from "../ui/Loader";
 
 function Expenses() {
-  // TODO REMOVE ANY
-  const token = useSelector((state: any) => state.token.token);
-  const refreshToken = useSelector((state: any) => state.token.refreshToken);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const { data, isLoading } = useFetch<{
     expenses: Expense[];
   }>({
     url: `${API_URL}/expenses`,
-    tokens: { token, refreshToken },
   });
 
   const buttonInner = (

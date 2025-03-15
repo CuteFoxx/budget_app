@@ -4,10 +4,6 @@ import { useNavigate } from "react-router";
 
 type UseFetchProps = {
   url: string;
-  tokens: {
-    token: string;
-    refreshToken: string;
-  };
 };
 
 type UseFetchReturn<T> = {
@@ -15,7 +11,7 @@ type UseFetchReturn<T> = {
   isLoading: boolean;
 };
 
-function useFetch<T>({ url, tokens }: UseFetchProps): UseFetchReturn<T> {
+function useFetch<T>({ url }: UseFetchProps): UseFetchReturn<T> {
   const nav = useNavigate();
   const [data, setData] = useState<T | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,7 +65,7 @@ function useFetch<T>({ url, tokens }: UseFetchProps): UseFetchReturn<T> {
         setData(resData);
         setIsLoading(false);
       })
-      .catch((err) => refreshToken());
+      .catch(() => refreshToken());
   }, []);
 
   return { data, isLoading };

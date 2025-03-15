@@ -48,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, ExpenseCategory>
      */
+    #[Groups(["expense", "expenseCategories"])]
     #[ORM\OneToMany(targetEntity: ExpenseCategory::class, mappedBy: 'user')]
     private Collection $expenseCategories;
 

@@ -22,7 +22,7 @@ class ExpenseCategory
     #[ORM\OneToMany(targetEntity: Expense::class, mappedBy: 'expenseCategory')]
     private Collection $expense;
 
-    #[Groups(["expense"])]
+    #[Groups(["expense", "expenseCategories"])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

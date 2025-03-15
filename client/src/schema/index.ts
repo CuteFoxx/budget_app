@@ -24,4 +24,7 @@ export const expenseFormSchema = z.object({
   amount: z.coerce.number().min(1, {
     message: "Expense amount must be at least 1 digit long.",
   }),
+  category: z.string().min(1, {
+    message: "Expense category must be at least 1 character long.",
+  }),
 });

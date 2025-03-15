@@ -29,7 +29,7 @@ class Expense
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[Groups(["expense"])]
+    #[Groups(["expense", "expenseCategories"])]
     #[ORM\ManyToOne(inversedBy: 'expense')]
     private ?ExpenseCategory $expenseCategory = null;
 

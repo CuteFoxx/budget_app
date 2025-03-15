@@ -40,4 +40,15 @@ class ExpenseCategoryRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function findOneByName($value): ?ExpenseCategory
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.name = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
