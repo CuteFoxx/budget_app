@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { categoryName } from "@/types/CategoryName";
+import { postData } from "@/utils/postData";
+import { toast } from "sonner";
 
 interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
   data: categoryName[] | undefined;
@@ -25,6 +27,19 @@ interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Combobox({ data, title, onChange }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<categoryName | null>(null);
+  const [categoryName, setCategoryName] = useState("");
+
+  const createCategory = (name: string) => {
+    postData("expenses/category/create", { name }).then((res) => {
+      if (res.ok || res.status === 200) {
+        toast(`Category: "${name}" has been created`);
+      } else {
+        toast.error(`Error`, {
+          description: `status: ${res.status}, message: ${res.statusText}`,
+        });
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col items-center space-x-4 gap-2">
@@ -43,9 +58,23 @@ export function Combobox({ data, title, onChange }: ComboboxProps) {
         </PopoverTrigger>
         <PopoverContent className="p-0" align="start">
           <Command>
-            <CommandInput placeholder="Change status..." />
+            <CommandInput
+              placeholder="Enter category name..."
+              value={categoryName}
+              onInput={(e) => {
+                const taget = e.target as HTMLInputElement;
+                setCategoryName(taget.value);
+              }}
+            />
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty className="p-4">
+                <Button
+                  onClick={() => createCategory(categoryName)}
+                  className="p-2"
+                >
+                  Create: {categoryName}
+                </Button>
+              </CommandEmpty>
               <CommandGroup>
                 {data &&
                   data.map((item) => (

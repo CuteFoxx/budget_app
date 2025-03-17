@@ -69,4 +69,19 @@ final class ExpenseController extends AbstractController
 
         return new JsonResponse();
     }
+
+
+
+    #[Route('api/expenses/category/create', name: 'app_expense_category_create',  methods: ['POST'])]
+    public function categoryCreate(Request $request): JsonResponse
+    {
+
+        $jsonData = json_decode($request->getContent(), true);
+
+        $expense = $this->expenseRepository->createCategory($jsonData);
+
+
+
+        return new JsonResponse(json_encode($expense));
+    }
 }

@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
-import Card from "../authentication-forms/Card";
-import { FormDialog } from "../ui/FormDialog";
-import AddExpenseForm from "./AddExpenseForm";
+import Card from "../../authentication-forms/Card";
+import { FormDialog } from "../../ui/FormDialog";
+import AddExpenseForm from "./AddExpenseFormWrapper";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/config";
 import { Expense } from "@/types/Expense";
@@ -14,7 +14,7 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import useFetch from "@/hooks/UseFetch";
-import Loader from "../ui/Loader";
+import Loader from "../../ui/Loader";
 
 function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -56,9 +56,11 @@ function Expenses() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses?.map((expense: Expense) => (
-                <ExpenseComponent key={expense.id} expense={expense} />
-              ))}
+              {expenses != null &&
+                expenses.length > 0 &&
+                expenses?.map((expense: Expense) => (
+                  <ExpenseComponent key={expense.id} expense={expense} />
+                ))}
             </TableBody>
           </Table>
         </>

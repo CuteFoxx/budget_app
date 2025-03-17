@@ -18,9 +18,7 @@ type FormDialogProps = {
 export function FormDialog({ children, buttonText, title }: FormDialogProps) {
   return (
     <Dialog>
-      <DialogDescription className="text-[0] opacity-0 absolute pointer-events-none">
-        Form dialog
-      </DialogDescription>
+      <DialogDescription className="sr-only">Form dialog</DialogDescription>
       <DialogTrigger asChild>
         <Button variant="outline">{buttonText}</Button>
       </DialogTrigger>

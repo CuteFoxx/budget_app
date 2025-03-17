@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/passwordInput";
 import { API_URL } from "@/config";
 import { loginFormSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -76,7 +77,8 @@ function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <PasswordInput placeholder="Password" {...field} />
+                    {/* <Input placeholder="Password" {...field} /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

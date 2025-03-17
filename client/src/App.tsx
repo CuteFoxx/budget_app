@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { ThemeProvider } from "./components/ui/ThemeProvider";
+import { ThemeProvider, useTheme } from "./components/ui/ThemeProvider";
 import { ModeToggle } from "./components/ui/mode-toggle";
 import Header from "./components/app/Header";
 import { Menu } from "lucide-react";
@@ -7,8 +7,11 @@ import SideNav from "./components/app/SideNav";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setIsMenuMinimized } from "./state/MenuSlice";
+import { Toaster } from "sonner";
 
 function App() {
+  const theme = useTheme();
+
   const [isMinimized, setIsMinimized] = useState(
     JSON.parse(localStorage.getItem("isMenuMinimized") ?? "false")
   );
@@ -39,6 +42,7 @@ function App() {
           </div>
         </main>
       </div>
+      <Toaster theme={theme.theme} />
     </ThemeProvider>
   );
 }

@@ -1,4 +1,4 @@
-import Expenses from "@/components/app/Expenses";
+import Expenses from "@/components/app/Expense/Expenses";
 import Incomes from "@/components/app/Incomes";
 
 function Overview() {

@@ -45,12 +45,26 @@ class ExpenseRepository extends ServiceEntityRepository
         return $expense;
     }
 
+    public function createCategory($data)
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        $expenseCategory = new ExpenseCategory();
+        $expenseCategory->setName($data['name']);
+        $expenseCategory->setUser($user);
+
+        $this->getEntityManager()->persist($expenseCategory);
+        $this->getEntityManager()->flush();
+
+        return $expenseCategory;
+    }
+
     public function getNewest($user)
     {
         return $this->createQueryBuilder('e')
             ->andWhere('e.user = :val')
             ->setParameter('val', $user->getId())
-            ->orderBy('e.created', 'ASC')
+            ->orderBy('e.created', 'DESC')
             ->getQuery()
             ->getResult()
         ;

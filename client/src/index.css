@@ -139,5 +139,5 @@
 }
 
 body {
-  overflow: hidden;
+  @apply md:overflow-x-hidden;
 }

@@ -30,7 +30,7 @@ function useFetch<T>({ url }: UseFetchProps): UseFetchReturn<T> {
   function refreshToken() {
     fetchData(`${API_URL}/token/refresh`)
       .then((res) => {
-        if (!res.ok) return handleUnAuthorized;
+        if (!res.ok || res.status === 401) return handleUnAuthorized();
 
         fetchData(url)
           .then((res) => res.json())
