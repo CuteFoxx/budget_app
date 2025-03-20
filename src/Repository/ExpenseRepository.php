@@ -45,6 +45,20 @@ class ExpenseRepository extends ServiceEntityRepository
         return $expense;
     }
 
+    public function delete($data)
+    {
+        $ids = $data['id'];
+
+        $deleted = $this->createQueryBuilder('e')
+            ->delete('App\Entity\Expense', 'e')
+            ->where('e.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->execute();
+
+        return $deleted;
+    }
+
     public function createCategory($data)
     {
         $user = $this->tokenStorage->getToken()->getUser();

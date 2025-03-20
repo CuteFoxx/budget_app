@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Combobox } from "../../ui/combobox";
+import { ExpenseCombobox } from "./expenseCombobox";
 import { UseFormReturn } from "react-hook-form";
 import { expenseFormSchema } from "@/schema";
 import { categoryName } from "@/types/CategoryName";
@@ -19,6 +19,7 @@ type AddExpenseFormProps = {
   categories: categoryName[] | undefined;
   form: UseFormReturn<z.infer<typeof expenseFormSchema>>;
   onSubmit: (values: z.infer<typeof expenseFormSchema>) => void;
+  noCategoryFound: (arg: string) => void;
   pending: boolean;
 };
 
@@ -27,6 +28,7 @@ function AddExpenseForm({
   form,
   onSubmit,
   pending,
+  noCategoryFound,
 }: AddExpenseFormProps) {
   return (
     <Form {...form}>
@@ -51,7 +53,29 @@ function AddExpenseForm({
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input type="numeric" placeholder="100.00" {...field} />
+                <Input
+                  type="numeric"
+                  placeholder="100.00"
+                  {...field}
+                  onFocus={(e) => {
+                    if (
+                      +parseFloat(e.target.value) == 0 ||
+                      e.target.value.trim() == ""
+                    ) {
+                      e.target.value = "";
+                    }
+                  }}
+                  onBlur={(e) => {
+                    console.log(e.target.value);
+
+                    if (
+                      +parseFloat(e.target.value) == 0 ||
+                      e.target.value.trim() == ""
+                    ) {
+                      e.target.value = "0";
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -61,10 +85,11 @@ function AddExpenseForm({
           control={form.control}
           name="category"
           render={({ field }) => (
-            <Combobox
+            <ExpenseCombobox
               data={categories}
               title="Category"
               onChange={field.onChange}
+              noResultsFound={noCategoryFound}
             />
           )}
         />

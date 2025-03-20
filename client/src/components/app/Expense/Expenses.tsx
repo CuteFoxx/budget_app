@@ -15,25 +15,36 @@ import {
 } from "@/components/ui/table";
 import useFetch from "@/hooks/UseFetch";
 import Loader from "../../ui/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { addExpenses } from "@/state/ExpenseSlice";
+import type { RootState } from "@/state/Store";
+import { categoryName } from "@/types/CategoryName";
+import { addCategories } from "@/state/CategorySlice";
+import { ExpenseColumns } from "./ExpenseTable/ExpenseColumns";
+import { DataTable } from "@/components/ui/dataTable";
 
 function Expenses() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const expenses = useSelector((state: RootState) => state.expenses.items);
+  const dispatch = useDispatch();
 
   const { data, isLoading } = useFetch<Expense[]>({
     url: `${API_URL}/expenses`,
   });
-
-  const buttonInner = (
-    <>
-      Add <Plus />
-    </>
-  );
+  const { data: categories } = useFetch<categoryName[]>({
+    url: `${API_URL}/expenses/categories`,
+  });
 
   useEffect(() => {
     if (data != null) {
-      setExpenses(data);
+      dispatch(addExpenses(data));
     }
-  });
+  }, [data]);
+
+  useEffect(() => {
+    if (categories != null) {
+      dispatch(addCategories(categories));
+    }
+  }, [categories]);
 
   return (
     <Card className="relative overflow-hidden">
@@ -43,26 +54,18 @@ function Expenses() {
           <div className="card-heading">
             <h2>Expenses</h2>
 
-            <FormDialog buttonText={buttonInner} title="Add Expense">
+            <FormDialog
+              buttonText={
+                <>
+                  Add <Plus />
+                </>
+              }
+              title="Add Expense"
+            >
               <AddExpenseForm />
             </FormDialog>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Category</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {expenses != null &&
-                expenses.length > 0 &&
-                expenses?.map((expense: Expense) => (
-                  <ExpenseComponent key={expense.id} expense={expense} />
-                ))}
-            </TableBody>
-          </Table>
+          <DataTable columns={ExpenseColumns} data={expenses} />
         </>
       )}
     </Card>

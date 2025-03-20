@@ -1,8 +1,8 @@
 import { API_URL } from "@/config";
 
-export const postData = (url: string, data: object): Promise<Response> => {
+export const deleteData = (url: string, data: object): Promise<Response> => {
   return fetch(`${API_URL}/${url}`, {
-    method: "POST",
+    method: "DELETE",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",

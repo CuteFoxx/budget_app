@@ -15,31 +15,26 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { categoryName } from "@/types/CategoryName";
-import { postData } from "@/utils/postData";
-import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/Store";
 
-interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ExpenseComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
   data: categoryName[] | undefined;
   title: string;
   onChange: any;
+  noResultsFound: (arg: string) => void;
 }
 
-export function Combobox({ data, title, onChange }: ComboboxProps) {
+export function ExpenseCombobox({
+  data,
+  title,
+  onChange,
+  noResultsFound,
+}: ExpenseComboboxProps) {
+  const categories = useSelector((state: RootState) => state.category.items);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<categoryName | null>(null);
-  const [categoryName, setCategoryName] = useState("");
-
-  const createCategory = (name: string) => {
-    postData("expenses/category/create", { name }).then((res) => {
-      if (res.ok || res.status === 200) {
-        toast(`Category: "${name}" has been created`);
-      } else {
-        toast.error(`Error`, {
-          description: `status: ${res.status}, message: ${res.statusText}`,
-        });
-      }
-    });
-  };
+  const [query, setQuery] = useState("");
 
   return (
     <div className="flex flex-col items-center space-x-4 gap-2">
@@ -60,37 +55,47 @@ export function Combobox({ data, title, onChange }: ComboboxProps) {
           <Command>
             <CommandInput
               placeholder="Enter category name..."
-              value={categoryName}
+              value={query}
               onInput={(e) => {
                 const taget = e.target as HTMLInputElement;
-                setCategoryName(taget.value);
+                setQuery(taget.value);
               }}
             />
             <CommandList>
               <CommandEmpty className="p-4">
-                <Button
-                  onClick={() => createCategory(categoryName)}
-                  className="p-2"
-                >
-                  Create: {categoryName}
+                <Button onClick={() => noResultsFound(query)} className="p-2">
+                  Create: {query}
                 </Button>
               </CommandEmpty>
               <CommandGroup>
+                {query.length > 0 &&
+                  !categories.find((item) =>
+                    item.name != null
+                      ? item?.name.toLowerCase() === query.toLowerCase().trim()
+                      : false
+                  ) && (
+                    <Button
+                      onClick={() => noResultsFound(query)}
+                      className="m-2"
+                    >
+                      Create: {query}
+                    </Button>
+                  )}
                 {data &&
                   data.map((item) => (
                     <CommandItem
-                      key={item.name}
-                      value={item.name}
+                      key={String(Date.now()) + String(item?.name)}
+                      value={item?.name}
                       onSelect={(value) => {
                         onChange(value);
                         setSelected(
-                          data?.find((priority) => priority.name === value) ||
+                          data?.find((priority) => priority?.name === value) ||
                             null
                         );
                         setOpen(false);
                       }}
                     >
-                      <span>{item.name}</span>
+                      <span>{item?.name ?? ""}</span>
                     </CommandItem>
                   ))}
               </CommandGroup>
