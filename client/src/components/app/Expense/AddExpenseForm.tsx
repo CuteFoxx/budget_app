@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ExpenseCombobox } from "./expenseCombobox";
+import { ExpenseCombobox } from "./ExpenseCombobox";
 import { UseFormReturn } from "react-hook-form";
 import { expenseFormSchema } from "@/schema";
 import { categoryName } from "@/types/CategoryName";

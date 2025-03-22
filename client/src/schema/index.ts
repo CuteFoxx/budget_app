@@ -1,3 +1,4 @@
+import { Currency } from "lucide-react";
 import { z } from "zod";
 
 export const registerFormSchema = z.object({
@@ -27,4 +28,8 @@ export const expenseFormSchema = z.object({
   category: z.string().min(1, {
     message: "Expense category must be at least 1 character long.",
   }),
+});
+
+export const settingsFormSchema = z.object({
+  currency: z.string(),
 });

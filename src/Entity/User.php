@@ -52,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ExpenseCategory::class, mappedBy: 'user')]
     private Collection $expenseCategories;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserSettings $userSettings = null;
+
     public function __construct()
     {
         $this->expenses = new ArrayCollection();
@@ -201,6 +204,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $expenseCategory->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserSettings(): ?UserSettings
+    {
+        return $this->userSettings;
+    }
+
+    public function setUserSettings(UserSettings $userSettings): static
+    {
+        // set the owning side of the relation if necessary
+        if ($userSettings->getUser() !== $this) {
+            $userSettings->setUser($this);
+        }
+
+        $this->userSettings = $userSettings;
 
         return $this;
     }

@@ -22,20 +22,26 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
     header: "Name",
   },
   {
-    accessorKey: "category",
+    accessorKey: "expenseCategory.name",
     header: "Category",
   },
   {
     accessorKey: "amount",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("uk-UA", {
-        style: "currency",
-        currency: "UAH",
-      }).format(amount);
+      const userSettings = useSelector(
+        (state: RootState) => state.settings.items
+      );
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      if (userSettings.currency != null) {
+        const amount = parseFloat(row.getValue("amount"));
+        const formatted = new Intl.NumberFormat(userSettings.language, {
+          style: "currency",
+          currency: userSettings.currency,
+        }).format(amount);
+
+        return <div className="text-right font-medium">{formatted}</div>;
+      }
     },
   },
   {

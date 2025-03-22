@@ -4,11 +4,13 @@ import expensesSliceReducer from "./ExpenseSlice";
 
 import type { ExpensesState } from "./ExpenseSlice";
 import categorySliceReducer, { categoryNameState } from "./CategorySlice";
+import settingsSliceReducer, { SettingsState } from "./SettingsSlice";
 
 export type RootState = {
   expenses: ExpensesState;
   menu: { isMenuMinimized: boolean };
   category: categoryNameState;
+  settings: SettingsState;
 };
 
 export const store = configureStore({
@@ -16,5 +18,6 @@ export const store = configureStore({
     menu: menuSliceReducer,
     expenses: expensesSliceReducer,
     category: categorySliceReducer,
+    settings: settingsSliceReducer,
   },
 });

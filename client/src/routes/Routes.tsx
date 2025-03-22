@@ -9,7 +9,7 @@ import Landing from "@/pages/Landing/Landing.tsx";
 import Registration from "@/pages/Registration/Registration.tsx";
 import Login from "@/pages/Login/Login.tsx";
 import Overview from "@/pages/Overview/Overview.tsx";
-import { Settings } from "lucide-react";
+import Settings from "../pages/Settings/Settings.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
