@@ -5,10 +5,15 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -16,11 +21,15 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     private UserPasswordHasherInterface $passwordHasher;
-    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher)
+
+    private JWTTokenManagerInterface $jwtManager;
+
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager)
     {
         parent::__construct($registry, User::class);
 
         $this->passwordHasher = $passwordHasher;
+        $this->jwtManager = $jwtManager;
     }
 
     /**
@@ -44,6 +53,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $user,
             $data['password']
         );
+        $usersExists = $this->findOneBy(['email' => $data['email']]);
+
+        if ((bool)$usersExists) {
+            return "User with this email already exists";
+        }
 
         $user->setName($data['username']);
         $user->setEmail($data['email']);
@@ -52,7 +66,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 
+
         return $user;
+    }
+
+    public function createCookies(UserInterface $user, $jwt = null): Response
+    {
+        if (null === $jwt) {
+            $jwt = $this->jwtManager->create($user);
+        }
+
+        $response = new JWTAuthenticationSuccessResponse($jwt, []);
+
+        $response->headers->setCookie(
+            new Cookie(
+                'BEARER',
+                $jwt,
+                new \DateTime('+1 day'),
+                '/',
+                null,
+                true,
+                true,
+                false,
+                'none'
+            )
+        );
+
+        return $response;
     }
 
     //    /**

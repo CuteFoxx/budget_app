@@ -10,6 +10,8 @@ if (localStorage.getItem("isMenuMinimized") != null) {
 
 const initialState = {
   isMenuMinimized: isMenuMinimized,
+  isMenuOpen: false,
+  isTablet: true,
 };
 
 export const menuSlice = createSlice({
@@ -19,8 +21,15 @@ export const menuSlice = createSlice({
     setIsMenuMinimized: (state, action: PayloadAction<boolean>) => {
       state.isMenuMinimized = action.payload;
     },
+    setIsMenuOpen: (state, action: PayloadAction<boolean>) => {
+      state.isMenuOpen = action.payload;
+    },
+    setIsTablet: (state, action: PayloadAction<boolean>) => {
+      state.isTablet = action.payload;
+    },
   },
 });
 
-export const { setIsMenuMinimized } = menuSlice.actions;
+export const { setIsMenuMinimized, setIsMenuOpen, setIsTablet } =
+  menuSlice.actions;
 export default menuSlice.reducer;

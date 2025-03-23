@@ -14,6 +14,7 @@ import { expenseFormSchema } from "@/schema";
 import { categoryName } from "@/types/CategoryName";
 import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
+import { DatePicker } from "@/components/ui/datepciker";
 
 type AddExpenseFormProps = {
   categories: categoryName[] | undefined;
@@ -91,6 +92,17 @@ function AddExpenseForm({
               onChange={field.onChange}
               noResultsFound={noCategoryFound}
             />
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Date:</FormLabel>
+              <DatePicker field={field} />
+              <FormMessage />
+            </FormItem>
           )}
         />
         <Button type="submit" disabled={pending}>

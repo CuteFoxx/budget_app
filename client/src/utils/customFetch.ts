@@ -1,8 +1,12 @@
 import { API_URL } from "@/config";
 
-export const postData = (url: string, data: object): Promise<Response> => {
+export const customFetch = (
+  url: string,
+  data: object,
+  method = "POST"
+): Promise<Response> => {
   return fetch(`${API_URL}/${url}`, {
-    method: "POST",
+    method: method,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",

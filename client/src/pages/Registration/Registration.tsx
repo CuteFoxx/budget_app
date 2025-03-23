@@ -14,13 +14,11 @@ import { Input } from "@/components/ui/input";
 import Card from "@/components/authentication-forms/Card";
 import { registerFormSchema as formSchema } from "@/schema";
 import { Link, useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { API_URL } from "@/config";
+import { PasswordInput } from "@/components/ui/passwordInput";
 
 function Registration() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,23 +29,28 @@ function Registration() {
     },
   });
 
-  useEffect(() => {
-    if (localStorage.getItem("token") !== null) {
-      navigate("/app");
-    }
-  }, []);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     fetch(`${API_URL}/register`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     })
-      .then((response) => response.json())
-      .then((data) => {})
-      .catch((error) => console.error("Error:", error));
+      .then((res) => {
+        if (res.ok) {
+          navigate("/app");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data != null) {
+          form.setError("root", {
+            message: data,
+          });
+        }
+      });
   }
 
   return (
@@ -89,13 +92,14 @@ function Registration() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <PasswordInput placeholder="Password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit">Submit</Button>
+            <FormMessage>{form.formState.errors.root?.message}</FormMessage>
           </form>
         </Form>
 

@@ -1,11 +1,7 @@
-import { API_URL } from "@/config";
-import useFetch from "@/hooks/UseFetch";
 import { expenseFormSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { categoryName } from "@/types/CategoryName";
-import { postData } from "@/utils/postData";
 import { useState } from "react";
 import AddExpenseForm from "./AddExpenseForm";
 import { toast } from "sonner";
@@ -13,6 +9,7 @@ import { RootState } from "@/state/Store";
 import { useDispatch, useSelector } from "react-redux";
 import { addExpenses } from "@/state/ExpenseSlice";
 import { addCategories } from "@/state/CategorySlice";
+import { customFetch } from "@/utils/customFetch";
 
 export default function AddExpenseFormWrapper() {
   const expenses = useSelector((state: RootState) => state.expenses.items);
@@ -25,13 +22,15 @@ export default function AddExpenseFormWrapper() {
     defaultValues: {
       name: "",
       amount: 0,
+      category: "",
+      date: new Date(Date.now()),
     },
   });
 
   function onSubmit(values: z.infer<typeof expenseFormSchema>) {
     setPending(true);
 
-    postData("expenses/create", values)
+    customFetch("expenses/create", { ...values, date: values.date.getTime() })
       .then((res) => {
         if (res.ok || res.status === 200) {
           setPending(false);
@@ -55,7 +54,7 @@ export default function AddExpenseFormWrapper() {
   }
 
   const createCategory = (name: string) => {
-    postData("expenses/category/create", { name })
+    customFetch("expenses/category/create", { name })
       .then((res) => {
         if (res.ok || res.status === 200) {
           toast(`Category: "${name}" has been created`);

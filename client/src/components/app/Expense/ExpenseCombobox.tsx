@@ -67,7 +67,7 @@ export function ExpenseCombobox({
                   Create: {query}
                 </Button>
               </CommandEmpty>
-              <CommandGroup>
+              <CommandGroup defaultValue={""}>
                 {query.length > 0 &&
                   !categories.find((item) =>
                     item.name != null

@@ -3,6 +3,7 @@ export type Expense = {
   name: string;
   expenseCategory: ExpenseCategory;
   amount: number;
+  date: Date;
 };
 
 export type Expenses = {

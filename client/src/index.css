@@ -129,7 +129,7 @@
   }
 
   .sidenav-item {
-    @apply flex gap-2 items-center md:gap-4 [.active]:text-purple-500 dark:[.active]:text-purple-600 [.active]:shadow-sm dark:[.active]:bg-neutral-800/40  
+    @apply flex gap-2  md:gap-4 [.active]:text-purple-500 dark:[.active]:text-purple-600 [.active]:shadow-sm dark:[.active]:bg-neutral-800/40  
     rounded-lg mr-4 p-4 hover:scale-[0.985] transition-all w-fit;
   }
 

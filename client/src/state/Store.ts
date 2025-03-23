@@ -8,7 +8,7 @@ import settingsSliceReducer, { SettingsState } from "./SettingsSlice";
 
 export type RootState = {
   expenses: ExpensesState;
-  menu: { isMenuMinimized: boolean };
+  menu: { isMenuMinimized: boolean; isMenuOpen: boolean; isTablet: boolean };
   category: categoryNameState;
   settings: SettingsState;
 };

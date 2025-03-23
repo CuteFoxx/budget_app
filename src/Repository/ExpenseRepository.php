@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Expense;
 use App\Entity\ExpenseCategory;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -31,10 +32,12 @@ class ExpenseRepository extends ServiceEntityRepository
     {
         $user = $this->tokenStorage->getToken()->getUser();
         $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category']);
+        $timestamp = intval($data['date']) / 1000;
 
         $expense = new Expense();
         $expense->setAmount($data['amount']);
         $expense->setName($data['name']);
+        $expense->setCreated(new \DateTime("@$timestamp"));
         $expense->setUser($user);
         $expense->setExpenseCategory($expenseCategory);
         $expense->setCreated(now());

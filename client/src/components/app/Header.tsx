@@ -7,7 +7,7 @@ function Header({ children, ...props }: HeaderProps) {
 
   return (
     <div
-      className={`py-4 border-b-1 dark:border-neutral-800 border-neutral-200 ${
+      className={`py-4 border-b-1 bg-white dark:bg-neutral-900 dark:border-neutral-800 border-neutral-200 sticky top-0 z-10 ${
         className ?? ""
       }`}
       {...rest}

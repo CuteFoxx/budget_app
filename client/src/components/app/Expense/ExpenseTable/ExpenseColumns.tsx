@@ -11,10 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteData } from "@/utils/deleteData";
 import { useDispatch, useSelector } from "react-redux";
 import { addExpenses } from "@/state/ExpenseSlice";
 import { RootState } from "@/state/Store";
+import { customFetch } from "@/utils/customFetch";
 
 export const ExpenseColumns: ColumnDef<Expense>[] = [
   {
@@ -26,6 +26,23 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
     header: "Category",
   },
   {
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row }) => {
+      const userSettings = useSelector(
+        (state: RootState) => state.settings.items
+      );
+      const dateRaw: Date = row.getValue("date");
+      const date = new Date(dateRaw);
+
+      if (dateRaw == null) {
+        return "";
+      }
+
+      return <>{date?.toLocaleDateString(userSettings.language ?? "en-US")}</>;
+    },
+  },
+  {
     accessorKey: "amount",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
@@ -33,15 +50,18 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
         (state: RootState) => state.settings.items
       );
 
-      if (userSettings.currency != null) {
-        const amount = parseFloat(row.getValue("amount"));
-        const formatted = new Intl.NumberFormat(userSettings.language, {
+      let formatted;
+      const amount = parseFloat(row.getValue("amount"));
+      if (userSettings.currency != null && userSettings.language != null) {
+        formatted = new Intl.NumberFormat(userSettings.language, {
           style: "currency",
           currency: userSettings.currency,
         }).format(amount);
-
-        return <div className="text-right font-medium">{formatted}</div>;
+      } else {
+        formatted = amount;
       }
+
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
@@ -66,7 +86,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
               <DropdownMenuItem
                 className="text-red-500"
                 onClick={() => {
-                  deleteData("expenses/delete", { id: expense.id });
+                  customFetch("expenses/delete", { id: expense.id }, "DELETE");
                   dispatch(
                     addExpenses(
                       expenses.filter((item) => item.id != expense.id)
