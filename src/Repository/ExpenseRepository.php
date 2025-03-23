@@ -7,6 +7,7 @@ use App\Entity\ExpenseCategory;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use function Symfony\Component\Clock\now;
@@ -20,12 +21,15 @@ class ExpenseRepository extends ServiceEntityRepository
 
     private ExpenseCategoryRepository $expenseCategoryRepository;
 
-    public function __construct(ManagerRegistry $registry, TokenStorageInterface $tokenStorage, ExpenseCategoryRepository $expenseCategoryRepository)
+    private LoggerInterface $logger;
+
+    public function __construct(ManagerRegistry $registry, TokenStorageInterface $tokenStorage, ExpenseCategoryRepository $expenseCategoryRepository, LoggerInterface $logger)
     {
         parent::__construct($registry, Expense::class);
 
         $this->tokenStorage = $tokenStorage;
         $this->expenseCategoryRepository = $expenseCategoryRepository;
+        $this->logger = $logger;
     }
 
     public function create($data)
@@ -37,7 +41,7 @@ class ExpenseRepository extends ServiceEntityRepository
         $expense = new Expense();
         $expense->setAmount($data['amount']);
         $expense->setName($data['name']);
-        $expense->setCreated(new \DateTime("@$timestamp"));
+        $expense->setDate(new DateTime("@$timestamp"));
         $expense->setUser($user);
         $expense->setExpenseCategory($expenseCategory);
         $expense->setCreated(now());
@@ -81,7 +85,7 @@ class ExpenseRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->andWhere('e.user = :val')
             ->setParameter('val', $user->getId())
-            ->orderBy('e.created', 'DESC')
+            ->orderBy('e.date', 'DESC')
             ->getQuery()
             ->getResult()
         ;

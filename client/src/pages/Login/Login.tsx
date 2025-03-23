@@ -29,8 +29,6 @@ function Login() {
     },
   });
 
-  useEffect(() => {}, []);
-
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
     fetch(`${API_URL}/login_check`, {
       method: "POST",

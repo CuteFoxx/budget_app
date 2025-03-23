@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,20 +21,27 @@ import { RootState } from "@/state/Store";
 interface ExpenseComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
   data: categoryName[] | undefined;
   title: string;
-  onChange: any;
   noResultsFound: (arg: string) => void;
+  field: any;
 }
 
 export function ExpenseCombobox({
   data,
   title,
-  onChange,
   noResultsFound,
+  field,
 }: ExpenseComboboxProps) {
   const categories = useSelector((state: RootState) => state.category.items);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<categoryName | null>(null);
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    if (field.value != null && field.value.trim() != "") {
+      setQuery(field.value);
+      setSelected({ name: field.value });
+    }
+  }, [field]);
 
   return (
     <div className="flex flex-col items-center space-x-4 gap-2">
@@ -87,7 +94,7 @@ export function ExpenseCombobox({
                       key={String(Date.now()) + String(item?.name)}
                       value={item?.name}
                       onSelect={(value) => {
-                        onChange(value);
+                        field.onChange(value);
                         setSelected(
                           data?.find((priority) => priority?.name === value) ||
                             null

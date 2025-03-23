@@ -41,16 +41,13 @@ class Expense
     private ?\DateTimeInterface $created = null;
 
     #[Groups(["expense"])]
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true, options: ["default" => "CURRENT_DATE"])]
     private ?\DateTimeInterface $date = null;
 
 
 
 
-    public function __construct()
-    {
-        $this->date = new \DateTime();
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {

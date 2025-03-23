@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,18 +10,20 @@ import { JSX } from "react";
 
 type FormDialogProps = {
   children: React.ReactNode;
-  buttonText: JSX.Element | string;
+  triggerButton: JSX.Element | string;
   title?: string;
 };
 
-export function FormDialog({ children, buttonText, title }: FormDialogProps) {
+export function FormDialog({
+  children,
+  triggerButton,
+  title,
+}: FormDialogProps) {
   return (
     <Dialog>
       <DialogDescription className="sr-only">Form dialog</DialogDescription>
-      <DialogTrigger asChild>
-        <Button variant="outline">{buttonText}</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[20rem] md:max-w-[30rem]">
+      <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+      <DialogContent forceMount className="sm:max-w-[20rem] md:max-w-[30rem]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

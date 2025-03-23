@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addExpenses } from "@/state/ExpenseSlice";
 import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
+import { FormDialog } from "@/components/ui/FormDialog";
+import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
 
 export const ExpenseColumns: ColumnDef<Expense>[] = [
   {
@@ -83,6 +85,29 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <FormDialog
+                  triggerButton={
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start pl-2"
+                    >
+                      Edit
+                    </Button>
+                  }
+                  title="Edit Expense"
+                >
+                  <EditExpenseFormWrapper
+                    defaultValues={{
+                      name: expense.name,
+                      amount: expense.amount,
+                      category: expense?.expenseCategory?.name ?? "",
+                      date: expense.date,
+                    }}
+                    id={expense.id}
+                  />
+                </FormDialog>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500"
                 onClick={() => {

@@ -89,8 +89,8 @@ function AddExpenseForm({
             <ExpenseCombobox
               data={categories}
               title="Category"
-              onChange={field.onChange}
               noResultsFound={noCategoryFound}
+              field={field}
             />
           )}
         />
