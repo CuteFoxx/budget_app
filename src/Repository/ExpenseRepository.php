@@ -35,7 +35,7 @@ class ExpenseRepository extends ServiceEntityRepository
     public function create($data)
     {
         $user = $this->tokenStorage->getToken()->getUser();
-        $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category']);
+        $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category'] ?? '');
         $timestamp = intval($data['date']) / 1000;
 
         $expense = new Expense();

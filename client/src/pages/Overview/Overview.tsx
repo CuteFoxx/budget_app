@@ -1,5 +1,5 @@
 import Expenses from "@/components/app/Expense/Expenses";
-import Incomes from "@/components/app/Incomes";
+import Incomes from "@/components/app/Income/Incomes";
 
 function Overview() {
   return (

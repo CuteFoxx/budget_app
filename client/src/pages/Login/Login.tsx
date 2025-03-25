@@ -10,15 +10,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/passwordInput";
-import { API_URL } from "@/config";
 import { loginFormSchema } from "@/schema";
+import { customFetch } from "@/utils/customFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 function Login() {
+  const [pending, setPending] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -30,23 +32,16 @@ function Login() {
   });
 
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    fetch(`${API_URL}/login_check`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: values.email,
-        password: values.password,
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          navigate("/app");
-        }
-      })
-      .catch((error) => console.error("Error:", error));
+    setPending(true);
+
+    customFetch(`login_check`, {
+      username: values.email,
+      password: values.password,
+    }).then((response) => {
+      if (response.ok) {
+        navigate("/app");
+      }
+    });
   }
 
   return (
@@ -76,13 +71,14 @@ function Login() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder="Password" {...field} />
-                    {/* <Input placeholder="Password" {...field} /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button disabled={pending} type="submit">
+              {pending ? <LoaderCircle className="animate-spin" /> : "Submit"}
+            </Button>
           </form>
         </Form>
 

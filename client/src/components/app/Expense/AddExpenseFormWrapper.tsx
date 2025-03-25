@@ -49,7 +49,17 @@ export default function AddExpenseFormWrapper() {
         if (typeof data === "string") {
           data = JSON.parse(data);
         }
-        dispatch(addExpenses([data, ...expenses]));
+        console.log(data);
+
+        dispatch(
+          addExpenses(
+            [...expenses, data].sort(
+              (a, b) =>
+                new Date(b.date).setHours(0, 0, 0, 0) -
+                new Date(a.date).setHours(0, 0, 0, 0)
+            )
+          )
+        );
       });
   }
 

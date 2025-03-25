@@ -42,9 +42,10 @@ function SettingsCurrency({ field }: any) {
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select Currency" />
       </SelectTrigger>
+
       <SelectContent>
-        {data &&
-          data.map((item) => {
+        {data != null &&
+          data?.map((item) => {
             return (
               <SelectItem key={item.id} value={item.currency}>
                 {item.currency}

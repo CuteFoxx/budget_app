@@ -8,9 +8,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ExpenseCombobox } from "./ExpenseCombobox";
+// import { ExpenseCombobox } from "./ExpenseCombobox";
 import { UseFormReturn } from "react-hook-form";
-import { expenseFormSchema } from "@/schema";
+import { incomeFormSchema } from "@/schema";
 import { categoryName } from "@/types/CategoryName";
 import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
@@ -18,13 +18,13 @@ import { DatePicker } from "@/components/ui/datepciker";
 
 type AddExpenseFormProps = {
   categories: categoryName[] | undefined;
-  form: UseFormReturn<z.infer<typeof expenseFormSchema>>;
-  onSubmit: (values: z.infer<typeof expenseFormSchema>) => void;
+  form: UseFormReturn<z.infer<typeof incomeFormSchema>>;
+  onSubmit: (values: z.infer<typeof incomeFormSchema>) => void;
   noCategoryFound: (arg: string) => void;
   pending: boolean;
 };
 
-function AddExpenseForm({
+function AddIncomeForm({
   categories,
   form,
   onSubmit,
@@ -47,7 +47,7 @@ function AddExpenseForm({
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="amount"
           render={({ field }) => (
@@ -79,8 +79,8 @@ function AddExpenseForm({
               <FormMessage />
             </FormItem>
           )}
-        />
-        <FormField
+        /> */}
+        {/* <FormField
           control={form.control}
           name="category"
           render={({ field }) => (
@@ -91,8 +91,8 @@ function AddExpenseForm({
               field={field}
             />
           )}
-        />
-        <FormField
+        /> */}
+        {/* <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
@@ -102,7 +102,7 @@ function AddExpenseForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <Button type="submit" disabled={pending}>
           {pending ? <LoaderCircle className="animate-spin" /> : "Submit"}
         </Button>
@@ -111,4 +111,4 @@ function AddExpenseForm({
   );
 }
 
-export default AddExpenseForm;
+export default AddIncomeForm;

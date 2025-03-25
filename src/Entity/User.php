@@ -55,10 +55,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?UserSettings $userSettings = null;
 
+    /**
+     * @var Collection<int, Income>
+     */
+    #[ORM\OneToMany(targetEntity: Income::class, mappedBy: 'user')]
+    private Collection $incomes;
+
+    /**
+     * @var Collection<int, IncomeCategory>
+     */
+    #[ORM\OneToMany(targetEntity: IncomeCategory::class, mappedBy: 'user')]
+    private Collection $incomeCategories;
+
     public function __construct()
     {
         $this->expenses = new ArrayCollection();
         $this->expenseCategories = new ArrayCollection();
+        $this->incomes = new ArrayCollection();
+        $this->incomeCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -221,6 +235,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->userSettings = $userSettings;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Income>
+     */
+    public function getIncomes(): Collection
+    {
+        return $this->incomes;
+    }
+
+    public function addIncome(Income $income): static
+    {
+        if (!$this->incomes->contains($income)) {
+            $this->incomes->add($income);
+            $income->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIncome(Income $income): static
+    {
+        if ($this->incomes->removeElement($income)) {
+            // set the owning side to null (unless already changed)
+            if ($income->getUser() === $this) {
+                $income->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, IncomeCategory>
+     */
+    public function getIncomeCategories(): Collection
+    {
+        return $this->incomeCategories;
+    }
+
+    public function addIncomeCategory(IncomeCategory $incomeCategory): static
+    {
+        if (!$this->incomeCategories->contains($incomeCategory)) {
+            $this->incomeCategories->add($incomeCategory);
+            $incomeCategory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIncomeCategory(IncomeCategory $incomeCategory): static
+    {
+        if ($this->incomeCategories->removeElement($incomeCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($incomeCategory->getUser() === $this) {
+                $incomeCategory->setUser(null);
+            }
+        }
 
         return $this;
     }

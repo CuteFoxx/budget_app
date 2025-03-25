@@ -14,10 +14,13 @@ import { Input } from "@/components/ui/input";
 import Card from "@/components/authentication-forms/Card";
 import { registerFormSchema as formSchema } from "@/schema";
 import { Link, useNavigate } from "react-router";
-import { API_URL } from "@/config";
 import { PasswordInput } from "@/components/ui/passwordInput";
+import { customFetch } from "@/utils/customFetch";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 function Registration() {
+  const [pending, setPending] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -30,22 +33,18 @@ function Registration() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch(`${API_URL}/register`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
+    setPending(true);
+    customFetch(`register`, values)
       .then((res) => {
         if (res.ok) {
+          setPending(false);
           navigate("/app");
         }
         return res.json();
       })
       .then((data) => {
         if (data != null) {
+          setPending(false);
           form.setError("root", {
             message: data,
           });
@@ -98,7 +97,9 @@ function Registration() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button disabled={pending} type="submit">
+              {pending ? <LoaderCircle className="animate-spin" /> : "Submit"}
+            </Button>
             <FormMessage>{form.formState.errors.root?.message}</FormMessage>
           </form>
         </Form>
