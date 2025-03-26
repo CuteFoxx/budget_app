@@ -12,16 +12,11 @@ import {
   setIsTablet,
 } from "./state/MenuSlice";
 import { Toaster } from "sonner";
-import useFetch from "./hooks/UseFetch";
-import { UserSettings } from "./types/UserSettings";
-import { API_URL } from "./config";
 import { setCurrencies, setSettings } from "./state/SettingsSlice";
-import { Currency } from "./types/Currency";
 import { addCategories } from "./state/CategorySlice";
 import { addExpenses } from "./state/ExpenseSlice";
-import { categoryName } from "./types/CategoryName";
-import { Expense } from "./types/Expense";
 import { RootState } from "./state/Store";
+import { customFetch } from "./utils/customFetch";
 
 function App() {
   const theme = useTheme();
@@ -31,35 +26,23 @@ function App() {
   const isTablet = useSelector((state: RootState) => state.menu.isTablet);
   const isMenuOpen = useSelector((state: RootState) => state.menu.isMenuOpen);
 
-  const { data: userSettings } = useFetch<UserSettings>({
-    url: `${API_URL}/user/settings`,
-  });
-  const { data: currencies } = useFetch<Currency[]>({
-    url: `${API_URL}/currencies`,
-  });
-  const { data: expenses } = useFetch<Expense[]>({
-    url: `${API_URL}/expenses`,
-  });
-  const { data: categories } = useFetch<categoryName[]>({
-    url: `${API_URL}/expenses/categories`,
-  });
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (userSettings != null) dispatch(setSettings(userSettings));
-  }, [userSettings]);
+  customFetch("expenses", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(addExpenses(JSON.parse(data))));
 
-  useEffect(() => {
-    if (currencies != null) dispatch(setCurrencies(currencies));
-  }, [currencies]);
-  useEffect(() => {
-    if (expenses != null) dispatch(addExpenses(expenses));
-  }, [expenses]);
+  customFetch("user/settings", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(setSettings(JSON.parse(data))));
 
-  useEffect(() => {
-    if (categories != null) dispatch(addCategories(categories));
-  }, [categories]);
+  customFetch("expenses/categories", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(addCategories(JSON.parse(data))));
+
+  customFetch("currencies", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(setCurrencies(JSON.parse(data))));
 
   useEffect(() => {
     checkWindowSize();

@@ -5,14 +5,20 @@ export const customFetch = (
   data: object,
   method = "POST"
 ): Promise<Response> => {
-  return fetch(`${API_URL}/${url}`, {
+  const options = {
     method: method,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
-  }).then((res) => {
+    // body: method === "GET" ? "" : JSON.stringify(data),
+  } as RequestInit;
+
+  if (method != "GET") {
+    options.body = JSON.stringify(data);
+  }
+
+  return fetch(`${API_URL}/${url}`, options).then((res) => {
     if (res.status === 401) {
       fetch(`${API_URL}/token/refresh`, {
         method: "POST",

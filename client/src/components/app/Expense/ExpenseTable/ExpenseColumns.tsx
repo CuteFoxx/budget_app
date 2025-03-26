@@ -111,7 +111,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
               <DropdownMenuItem
                 className="text-red-500"
                 onClick={() => {
-                  customFetch("expenses/delete", { id: expense.id }, "DELETE");
+                  customFetch("expenses", { id: expense.id }, "DELETE");
                   dispatch(
                     addExpenses(
                       expenses.filter((item) => item.id != expense.id)

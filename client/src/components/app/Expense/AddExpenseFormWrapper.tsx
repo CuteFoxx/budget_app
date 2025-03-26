@@ -30,7 +30,7 @@ export default function AddExpenseFormWrapper() {
   function onSubmit(values: z.infer<typeof expenseFormSchema>) {
     setPending(true);
 
-    customFetch("expenses/create", { ...values, date: values.date.getTime() })
+    customFetch("expenses", { ...values, date: values.date.getTime() })
       .then((res) => {
         if (res.ok || res.status === 200) {
           setPending(false);
@@ -64,7 +64,7 @@ export default function AddExpenseFormWrapper() {
   }
 
   const createCategory = (name: string) => {
-    customFetch("expenses/category/create", { name })
+    customFetch("expenses/categories", { name })
       .then((res) => {
         if (res.ok || res.status === 200) {
           toast(`Category: "${name}" has been created`);

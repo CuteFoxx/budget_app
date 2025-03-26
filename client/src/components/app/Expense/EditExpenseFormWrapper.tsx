@@ -60,7 +60,7 @@ export default function EditExpenseFormWrapper({
   }
 
   const createCategory = (name: string) => {
-    customFetch("expenses/category/create", { name })
+    customFetch("expenses/categories", { name })
       .then((res) => {
         if (res.ok || res.status === 200) {
           toast(`Category: "${name}" has been created`);

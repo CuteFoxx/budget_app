@@ -31,22 +31,18 @@ final class RegistrationController extends AbstractController
         $this->refreshTokenManager = $refreshTokenManager;
     }
 
-    #[Route('api/register', name: 'app_registration')]
+    #[Route('api/register', name: 'app_registration', methods: ['POST'])]
     public function index(Request $request): JsonResponse
     {
-        if ($request->getMethod() === 'POST') {
-            $jsonData = json_decode($request->getContent(), true);
 
-            $user = $this->userRepository->create($jsonData);
+        $jsonData = json_decode($request->getContent(), true);
 
-            if (!is_string($user)) {
-                return $this->userRepository->createCookies($user);
-            } else {
-                return new JsonResponse($user, 409);
-            }
+        $user = $this->userRepository->create($jsonData);
+
+        if (!is_string($user)) {
+            return $this->userRepository->createCookies($user);
+        } else {
+            return new JsonResponse($user, 409);
         }
-
-
-        return new JsonResponse('Unsupported method', 405);
     }
 }

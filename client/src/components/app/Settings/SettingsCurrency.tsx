@@ -23,7 +23,7 @@ function SettingsCurrency({ field }: any) {
         const selected = data?.find((item) => item.currency == value);
 
         if (selected != null) {
-          customFetch(`user/set/settings`, {
+          customFetch(`user/settings`, {
             language: selected?.language,
             currency: selected?.currency,
           }).then(() =>

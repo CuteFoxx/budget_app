@@ -25,7 +25,7 @@ final class UserSettingsController extends AbstractController
     }
 
 
-    #[Route('/api/user/settings', name: 'api_user_settings', methods: ['POST'])]
+    #[Route('/api/user/settings', name: 'api_user_settings', methods: ['GET'])]
     public function get(): JsonResponse
     {
         $token = $this->tokenStorage->getToken();
@@ -41,7 +41,7 @@ final class UserSettingsController extends AbstractController
     }
 
 
-    #[Route('/api/user/set/settings', name: 'api_user_set_settings')]
+    #[Route('/api/user/settings', methods: ['POST'])]
     public function setSettings(Request $request, UserSettingsRepository $userSettingsRepository): JsonResponse
     {
         $jsonData = json_decode($request->getContent(), true);

@@ -16,7 +16,7 @@ final class CurrenciesController extends AbstractController
         $this->serializer =  $serializer;
     }
 
-    #[Route('api/currencies', name: 'api_currencies', methods: ["GET", 'POST'])]
+    #[Route('api/currencies', name: 'api_currencies', methods: ["GET"])]
     public function index(CurrenciesRepository $currenciesRepository): JsonResponse
     {
         $currencies = $currenciesRepository->getAll();

@@ -32,7 +32,7 @@ export default function AddIncomeFormWrapper() {
     setPending(true);
 
     // date: values.date.getTime()
-    customFetch("income/create", { ...values })
+    customFetch("incomes", { ...values })
       .then((res) => {
         if (res.ok || res.status === 200) {
           setPending(false);

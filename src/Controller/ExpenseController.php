@@ -30,7 +30,7 @@ final class ExpenseController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('api/expenses', name: 'app_expense')]
+    #[Route('api/expenses', name: 'app_expense', methods: ['GET'])]
     public function index(ExpenseRepository $expenseRepository): JsonResponse
     {
         $token = $this->tokenStorage->getToken();
@@ -41,7 +41,27 @@ final class ExpenseController extends AbstractController
         return $this->json($this->serializer->serialize($expenses, 'json',  ['groups' => ['expense']]));
     }
 
-    #[Route('api/expenses/categories', name: 'app_expense_categories')]
+    #[Route('api/expenses', methods: ["POST"])]
+    public function createExpense(Request $request): JsonResponse
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $expense = $this->expenseRepository->create($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($expense, 'json',  ['groups' => ['expense']]));
+    }
+
+
+    #[Route('api/expenses', methods: ["DELETE"])]
+    public function deleteExpense(Request $request)
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $deleted = $this->expenseRepository->delete($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($deleted, 'json',  ['groups' => ['expense']]));
+    }
+
+
+    #[Route('api/expenses/categories', name: 'app_expense_categories', methods: ['GET'])]
     public function categories(): JsonResponse
     {
         /**
@@ -54,27 +74,7 @@ final class ExpenseController extends AbstractController
         return $this->json($this->serializer->serialize($expenseCategories, 'json',  ['groups' => ['expenseCategories']]));
     }
 
-    #[Route('api/expenses/create', name: 'app_expense_create', methods: ["POST"])]
-    public function createExpense(Request $request): JsonResponse
-    {
-        $jsonData = json_decode($request->getContent(), true);
-        $expense = $this->expenseRepository->create($jsonData);
-
-        return new JsonResponse($this->serializer->serialize($expense, 'json',  ['groups' => ['expense']]));
-    }
-
-
-    #[Route('api/expenses/delete', name: 'app_expense_delete', methods: ["DELETE"])]
-    public function deleteExpense(Request $request)
-    {
-        $jsonData = json_decode($request->getContent(), true);
-        $deleted = $this->expenseRepository->delete($jsonData);
-
-        return new JsonResponse($this->serializer->serialize($deleted, 'json',  ['groups' => ['expense']]));
-    }
-
-
-    #[Route('api/expenses/category/create', name: 'app_expense_category_create',  methods: ['POST'])]
+    #[Route('api/expenses/categories',  methods: ['POST'])]
     public function categoryCreate(Request $request): JsonResponse
     {
         $jsonData = json_decode($request->getContent(), true);

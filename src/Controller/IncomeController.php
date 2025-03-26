@@ -25,15 +25,8 @@ final class IncomeController extends AbstractController
         $this->tokenStorage = $tokenStorage;
     }
 
-    #[Route('api/income/create', name: 'api_income_create')]
-    public function index(Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
 
-        return new JsonResponse($this->serializer->serialize($this->incomeRepository->create($data), 'json', ['groups' => ['income']]));
-    }
-
-    #[Route('api/incomes', name: 'api_incomes')]
+    #[Route('api/incomes', name: 'api_incomes',  methods: ['GET'])]
     public function get(): JsonResponse
     {
         $token = $this->tokenStorage->getToken();
@@ -42,5 +35,13 @@ final class IncomeController extends AbstractController
         $incomes = $this->incomeRepository->getNewest($user);
 
         return $this->json($this->serializer->serialize($incomes, 'json',  ['groups' => ['income']]));
+    }
+
+    #[Route('api/incomes', methods: ['POST'])]
+    public function index(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        return new JsonResponse($this->serializer->serialize($this->incomeRepository->create($data), 'json', ['groups' => ['income']]));
     }
 }
