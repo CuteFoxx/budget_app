@@ -17,14 +17,16 @@ import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
 import { FormDialog } from "@/components/ui/FormDialog";
 import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
+import { Income } from "@/types/Income";
+import { addIncomes } from "@/state/IncomeSlice";
 
-export const ExpenseColumns: ColumnDef<Expense>[] = [
+export const IncomeColumns: ColumnDef<Income>[] = [
   {
     accessorKey: "name",
     header: "Name",
   },
   {
-    accessorFn: (row) => row?.expenseCategory?.name ?? "",
+    accessorFn: (row) => row?.incomeCategory?.name ?? "",
     header: "Category",
   },
   {
@@ -34,15 +36,14 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
       const userSettings = useSelector(
         (state: RootState) => state.settings.items
       );
-      const dateRaw: Date = row?.getValue("date");
+      const dateRaw: Date = row.getValue("date");
       const date = new Date(dateRaw);
 
       if (dateRaw == null) {
         return "";
       }
-      console.log(date.getDate());
 
-      return <>{date?.toLocaleDateString(userSettings?.language ?? "en-US")}</>;
+      return <>{date?.toLocaleDateString(userSettings.language ?? "en-US")}</>;
     },
   },
   {
@@ -54,7 +55,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
       );
 
       let formatted;
-      const amount = parseFloat(row?.getValue("amount"));
+      const amount = parseFloat(row.getValue("amount"));
       if (userSettings.currency != null && userSettings.language != null) {
         formatted = new Intl.NumberFormat(userSettings.language, {
           style: "currency",
@@ -71,8 +72,8 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
     id: "actions",
     cell: ({ row }) => {
       const dispatch = useDispatch();
-      const expenses = useSelector((state: RootState) => state.expenses.items);
-      const expense = row?.original;
+      const incomes = useSelector((state: RootState) => state.incomes.items);
+      const income = row.original;
 
       return (
         <div className="text-right">
@@ -89,7 +90,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <FormDialog
+                {/* <FormDialog
                   triggerButton={
                     <Button
                       variant="ghost"
@@ -109,16 +110,14 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
                     }}
                     id={expense.id}
                   />
-                </FormDialog>
+                </FormDialog> */}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500"
                 onClick={() => {
-                  customFetch("expenses", { id: expense.id }, "DELETE");
+                  customFetch("incomes", { id: income.id }, "DELETE");
                   dispatch(
-                    addExpenses(
-                      expenses.filter((item) => item.id != expense.id)
-                    )
+                    addIncomes(incomes.filter((item) => item.id != income.id))
                   );
                 }}
               >

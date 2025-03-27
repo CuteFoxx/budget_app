@@ -26,6 +26,7 @@ function SettingsCurrency({ field }: any) {
           customFetch(`user/settings`, {
             language: selected?.language,
             currency: selected?.currency,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           }).then(() =>
             dispatch(
               setSettings({

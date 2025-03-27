@@ -51,8 +51,9 @@ class UserSettingsRepository extends ServiceEntityRepository
 
     private function setSettings(array $data, UserSettings $entity)
     {
-        $entity->setLanguage($data['language']);
-        $entity->setCurrency($data['currency']);
+        $entity->setLanguage($data['language'] ?? "");
+        $entity->setTimezone($data['timezone'] ?? "");
+        $entity->setCurrency($data['currency'] ?? "");
     }
 
     //    /**

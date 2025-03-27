@@ -29,6 +29,7 @@ export function DatePicker({ field }: any) {
       <PopoverContent className="w-auto p-0 z-[99]">
         <Calendar
           mode="single"
+          defaultMonth={field.value}
           selected={field.value}
           onSelect={field.onChange}
           initialFocus

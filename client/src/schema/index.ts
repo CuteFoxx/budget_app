@@ -32,11 +32,11 @@ export const incomeFormSchema = z.object({
   name: z.string().min(4, {
     message: "Income name must be at least 4 characters.",
   }),
-  // amount: z.coerce.number().min(1, {
-  //   message: "Expense amount must be at least 1 digit long.",
-  // }),
-  // category: z.string().optional(),
-  // date: z.coerce.date(),
+  amount: z.coerce.number().min(1, {
+    message: "Income amount must be at least 1 digit long.",
+  }),
+  category: z.string().optional(),
+  date: z.coerce.date(),
 });
 
 export const settingsFormSchema = z.object({

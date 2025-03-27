@@ -3,13 +3,13 @@ import menuSliceReducer from "./MenuSlice";
 import expensesSliceReducer from "./ExpenseSlice";
 
 import type { ExpensesState } from "./ExpenseSlice";
-import categorySliceReducer, { categoryNameState } from "./CategorySlice";
 import settingsSliceReducer, { SettingsState } from "./SettingsSlice";
+import incomesSliceReducer, { IncomesState } from "./IncomeSlice";
 
 export type RootState = {
   expenses: ExpensesState;
+  incomes: IncomesState;
   menu: { isMenuMinimized: boolean; isMenuOpen: boolean; isTablet: boolean };
-  category: categoryNameState;
   settings: SettingsState;
 };
 
@@ -17,7 +17,7 @@ export const store = configureStore({
   reducer: {
     menu: menuSliceReducer,
     expenses: expensesSliceReducer,
-    category: categorySliceReducer,
+    incomes: incomesSliceReducer,
     settings: settingsSliceReducer,
   },
 });

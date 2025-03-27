@@ -7,13 +7,14 @@ import AddExpenseForm from "./AddExpenseForm";
 import { toast } from "sonner";
 import { RootState } from "@/state/Store";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpenses } from "@/state/ExpenseSlice";
-import { addCategories } from "@/state/CategorySlice";
+import { addExpenses, addCategories } from "@/state/ExpenseSlice";
 import { customFetch } from "@/utils/customFetch";
 
 export default function AddExpenseFormWrapper() {
   const expenses = useSelector((state: RootState) => state.expenses.items);
-  const categories = useSelector((state: RootState) => state.category.items);
+  const categories = useSelector(
+    (state: RootState) => state.expenses.categories
+  );
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
 

@@ -7,14 +7,15 @@ import AddExpenseForm from "./AddExpenseForm";
 import { toast } from "sonner";
 import { RootState } from "@/state/Store";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpenses } from "@/state/ExpenseSlice";
-import { addCategories } from "@/state/CategorySlice";
 import { customFetch } from "@/utils/customFetch";
 import AddIncomeForm from "./AddIncomeForm";
+import { addCategories, addIncomes } from "@/state/IncomeSlice";
 
 export default function AddIncomeFormWrapper() {
   const expenses = useSelector((state: RootState) => state.expenses.items);
-  const categories = useSelector((state: RootState) => state.category.items);
+  const categories = useSelector(
+    (state: RootState) => state.incomes.categories
+  );
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
 
@@ -22,23 +23,22 @@ export default function AddIncomeFormWrapper() {
     resolver: zodResolver(incomeFormSchema),
     defaultValues: {
       name: "",
-      //   amount: 0,
-      //   category: "",
-      //   date: new Date(Date.now()),
+      amount: 0,
+      category: "",
+      date: new Date(Date.now()),
     },
   });
 
   function onSubmit(values: z.infer<typeof incomeFormSchema>) {
     setPending(true);
 
-    // date: values.date.getTime()
-    customFetch("incomes", { ...values })
+    customFetch("incomes", { ...values, date: values.date.getTime() })
       .then((res) => {
         if (res.ok || res.status === 200) {
           setPending(false);
-          //   toast(`Expense: "${values.name}" has been added`, {
-          //     description: `Amount: ${values.amount}, Category: ${values.category}`,
-          //   });
+          toast(`Income: "${values.name}" has been added`, {
+            // description: `Amount: ${values.amount}, Category: ${values.category}`,
+          });
         } else {
           toast.error(`Error`, {
             description: `status: ${res.status}, message: ${res.statusText}`,
@@ -51,38 +51,37 @@ export default function AddIncomeFormWrapper() {
         if (typeof data === "string") {
           data = JSON.parse(data);
         }
-        console.log(data);
 
-        // dispatch(
-        //   addExpenses(
-        //     [...expenses, data].sort(
-        //       (a, b) =>
-        //         new Date(b.date).setHours(0, 0, 0, 0) -
-        //         new Date(a.date).setHours(0, 0, 0, 0)
-        //     )
-        //   )
-        // );
+        dispatch(
+          addIncomes(
+            [...expenses, data].sort(
+              (a, b) =>
+                new Date(b.date).setHours(0, 0, 0, 0) -
+                new Date(a.date).setHours(0, 0, 0, 0)
+            )
+          )
+        );
       });
   }
 
   const createCategory = (name: string) => {
-    // customFetch("expenses/category/create", { name })
-    //   .then((res) => {
-    //     if (res.ok || res.status === 200) {
-    //       toast(`Category: "${name}" has been created`);
-    //     } else {
-    //       toast.error(`Error`, {
-    //         description: `status: ${res.status}, message: ${res.statusText}`,
-    //       });
-    //     }
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     if (typeof data === "string") {
-    //       data = JSON.parse(data);
-    //     }
-    //     dispatch(addCategories([data, ...categories]));
-    //   });
+    customFetch("incomes/categories", { name })
+      .then((res) => {
+        if (res.ok || res.status === 200) {
+          toast(`Category: "${name}" has been created`);
+        } else {
+          toast.error(`Error`, {
+            description: `status: ${res.status}, message: ${res.statusText}`,
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (typeof data === "string") {
+          data = JSON.parse(data);
+        }
+        dispatch(addCategories([data, ...categories]));
+      });
   };
 
   return (

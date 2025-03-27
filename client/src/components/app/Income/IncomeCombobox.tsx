@@ -18,21 +18,21 @@ import { categoryName } from "@/types/CategoryName";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/Store";
 
-interface ExpenseComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
+interface IncomeComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
   data: categoryName[] | undefined;
   title: string;
   noResultsFound: (arg: string) => void;
   field: any;
 }
 
-export function ExpenseCombobox({
+export function IncomeCombobox({
   data,
   title,
   noResultsFound,
   field,
-}: ExpenseComboboxProps) {
+}: IncomeComboboxProps) {
   const categories = useSelector(
-    (state: RootState) => state.expenses.categories
+    (state: RootState) => state.incomes.categories
   );
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<categoryName | null>(null);

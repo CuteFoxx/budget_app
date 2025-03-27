@@ -11,10 +11,9 @@ export const customFetch = (
     headers: {
       "Content-Type": "application/json",
     },
-    // body: method === "GET" ? "" : JSON.stringify(data),
   } as RequestInit;
 
-  if (method != "GET") {
+  if (method != "GET" && method != "HEAD") {
     options.body = JSON.stringify(data);
   }
 
@@ -27,11 +26,9 @@ export const customFetch = (
           "Content-Type": "application/json",
         },
       }).then((res) => {
-        if (!res.ok) {
+        if (!res.ok || res.status == 204) {
           window.location.href = "/login";
           localStorage.removeItem("loggedIn");
-        } else {
-          console.log("refreshed");
         }
       });
     }

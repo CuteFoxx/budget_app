@@ -60,6 +60,15 @@ final class ExpenseController extends AbstractController
         return new JsonResponse($this->serializer->serialize($deleted, 'json',  ['groups' => ['expense']]));
     }
 
+    #[Route('api/expenses', methods: ["PUT"])]
+    public function updateExpense(Request $request): JsonResponse
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $expense = $this->expenseRepository->update($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($expense, 'json',  ['groups' => ['expense']]));
+    }
+
 
     #[Route('api/expenses/categories', name: 'app_expense_categories', methods: ['GET'])]
     public function categories(): JsonResponse

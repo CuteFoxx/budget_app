@@ -41,7 +41,7 @@ class Expense
     private ?\DateTimeInterface $created = null;
 
     #[Groups(["expense"])]
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true, options: ["default" => "CURRENT_DATE"])]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeInterface $date = null;
 
 

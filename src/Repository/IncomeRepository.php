@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Income;
+use App\Entity\IncomeCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -29,17 +30,47 @@ class IncomeRepository extends ServiceEntityRepository
         $user = $this->tokenStorage->getToken()->getUser();
         $income = new Income();
         $incomeCategory = $this->incomeCategoryRepository->findOneByName($data['category'] ?? '');
+        $timestamp = intval($data['date']) / 1000;
 
         $income->setUser($user);
         $income->setAmount($data['amount'] ?? 0);
         $income->setName($data['name'] ?? '');
-        $income->setDate($data['date'] ?? null);
+        $income->setDate(new \DateTime("@$timestamp"));
         $income->setIncomeCategory($incomeCategory);
 
         $this->getEntityManager()->persist($income);
         $this->getEntityManager()->flush();
 
         return $income;
+    }
+
+    public function delete($data)
+    {
+        $ids = $data['id'];
+
+        $deleted = $this->createQueryBuilder('i')
+            ->delete('App\Entity\Income', 'i')
+            ->where('i.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->execute();
+
+        return $deleted;
+    }
+
+
+    public function createCategory($data)
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        $incomeCategory = new IncomeCategory();
+        $incomeCategory->setName($data['name']);
+        $incomeCategory->setUser($user);
+
+        $this->getEntityManager()->persist($incomeCategory);
+        $this->getEntityManager()->flush();
+
+        return $incomeCategory;
     }
 
     public function getNewest($user)

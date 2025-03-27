@@ -1,22 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { Expense } from "@/types/Expense";
+import { Income } from "@/types/Income";
 import { categoryName } from "@/types/CategoryName";
 
-export type ExpensesState = {
-  items: Expense[];
+export type IncomesState = {
+  items: Income[];
   categories: categoryName[];
 };
 
 const initialState = {
   items: [],
   categories: [],
-} as ExpensesState;
+} as IncomesState;
 
-export const ExpenseSlice = createSlice({
-  name: "expenses",
+export const IncomeSlice = createSlice({
+  name: "incomes",
   initialState,
   reducers: {
-    addExpenses: (state, action: PayloadAction<Expense[]>) => {
+    addIncomes: (state, action: PayloadAction<Income[]>) => {
       state.items = action.payload;
     },
     addCategories: (state, action: PayloadAction<categoryName[]>) => {
@@ -25,5 +25,5 @@ export const ExpenseSlice = createSlice({
   },
 });
 
-export const { addExpenses, addCategories } = ExpenseSlice.actions;
-export default ExpenseSlice.reducer;
+export const { addIncomes, addCategories } = IncomeSlice.actions;
+export default IncomeSlice.reducer;

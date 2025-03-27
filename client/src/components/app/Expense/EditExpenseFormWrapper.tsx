@@ -7,8 +7,7 @@ import AddExpenseForm from "./AddExpenseForm";
 import { toast } from "sonner";
 import { RootState } from "@/state/Store";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpenses } from "@/state/ExpenseSlice";
-import { addCategories } from "@/state/CategorySlice";
+import { addExpenses, addCategories } from "@/state/ExpenseSlice";
 import { customFetch } from "@/utils/customFetch";
 
 export default function EditExpenseFormWrapper({
@@ -19,7 +18,9 @@ export default function EditExpenseFormWrapper({
   id: number;
 }) {
   const expenses = useSelector((state: RootState) => state.expenses.items);
-  const categories = useSelector((state: RootState) => state.category.items);
+  const categories = useSelector(
+    (state: RootState) => state.expenses.categories
+  );
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
 
@@ -36,27 +37,39 @@ export default function EditExpenseFormWrapper({
   function onSubmit(values: z.infer<typeof expenseFormSchema>) {
     setPending(true);
 
-    // customFetch("expenses/create", { ...values, date: values.date.getTime() })
-    //   .then((res) => {
-    //     if (res.ok || res.status === 200) {
-    //       setPending(false);
-    //       toast(`Expense: "${values.name}" has been added`, {
-    //         description: `Amount: ${values.amount}, Category: ${values.category}`,
-    //       });
-    //     } else {
-    //       toast.error(`Error`, {
-    //         description: `status: ${res.status}, message: ${res.statusText}`,
-    //       });
-    //     }
+    console.log(values.date.getTime());
 
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     if (typeof data === "string") {
-    //       data = JSON.parse(data);
-    //     }
-    //     dispatch(addExpenses([data, ...expenses]));
-    //   });
+    customFetch(
+      "expenses",
+      { id: id, ...values, date: values.date.getTime() },
+      "PUT"
+    )
+      .then((res) => {
+        if (res.ok || res.status === 200) {
+          setPending(false);
+          toast(`Expense: "${values.name}" has been updated`);
+        } else {
+          toast.error(`Error`, {
+            description: `status: ${res.status}, message: ${res.statusText}`,
+          });
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        if (typeof data === "string") {
+          data = JSON.parse(data);
+        }
+        dispatch(
+          addExpenses(
+            [data ?? [], ...expenses.filter((e) => e.id != id)].sort(
+              (a, b) =>
+                new Date(b.date).setHours(0, 0, 0, 0) -
+                new Date(a.date).setHours(0, 0, 0, 0)
+            )
+          )
+        );
+      });
   }
 
   const createCategory = (name: string) => {

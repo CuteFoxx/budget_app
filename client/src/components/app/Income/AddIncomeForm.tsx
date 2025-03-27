@@ -15,6 +15,7 @@ import { categoryName } from "@/types/CategoryName";
 import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
 import { DatePicker } from "@/components/ui/datepciker";
+import { IncomeCombobox } from "./IncomeCombobox";
 
 type AddExpenseFormProps = {
   categories: categoryName[] | undefined;
@@ -41,13 +42,13 @@ function AddIncomeForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Expense name" {...field} />
+                <Input placeholder="Income name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
           control={form.control}
           name="amount"
           render={({ field }) => (
@@ -79,20 +80,20 @@ function AddIncomeForm({
               <FormMessage />
             </FormItem>
           )}
-        /> */}
-        {/* <FormField
+        />
+        <FormField
           control={form.control}
           name="category"
           render={({ field }) => (
-            <ExpenseCombobox
+            <IncomeCombobox
               data={categories}
               title="Category"
               noResultsFound={noCategoryFound}
               field={field}
             />
           )}
-        /> */}
-        {/* <FormField
+        />
+        <FormField
           control={form.control}
           name="date"
           render={({ field }) => (
@@ -102,7 +103,7 @@ function AddIncomeForm({
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
         <Button type="submit" disabled={pending}>
           {pending ? <LoaderCircle className="animate-spin" /> : "Submit"}
         </Button>

@@ -13,10 +13,10 @@ import {
 } from "./state/MenuSlice";
 import { Toaster } from "sonner";
 import { setCurrencies, setSettings } from "./state/SettingsSlice";
-import { addCategories } from "./state/CategorySlice";
-import { addExpenses } from "./state/ExpenseSlice";
+import { addExpenses, addCategories } from "./state/ExpenseSlice";
 import { RootState } from "./state/Store";
 import { customFetch } from "./utils/customFetch";
+import { addIncomes } from "./state/IncomeSlice";
 
 function App() {
   const theme = useTheme();
@@ -31,6 +31,10 @@ function App() {
   customFetch("expenses", {}, "GET")
     .then((res) => res.json())
     .then((data) => dispatch(addExpenses(JSON.parse(data))));
+
+  customFetch("incomes", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(addIncomes(JSON.parse(data))));
 
   customFetch("user/settings", {}, "GET")
     .then((res) => res.json())

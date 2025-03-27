@@ -44,4 +44,22 @@ final class IncomeController extends AbstractController
 
         return new JsonResponse($this->serializer->serialize($this->incomeRepository->create($data), 'json', ['groups' => ['income']]));
     }
+
+    #[Route('api/incomes', methods: ["DELETE"])]
+    public function deleteExpense(Request $request)
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $deleted = $this->incomeRepository->delete($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($deleted, 'json',  ['groups' => ['income']]));
+    }
+
+    #[Route('api/incomes/categories',  methods: ['POST'])]
+    public function categoryCreate(Request $request): JsonResponse
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $expenseCategory = $this->incomeRepository->createCategory($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($expenseCategory, 'json',  ['groups' => ['incomeCategories']]));
+    }
 }

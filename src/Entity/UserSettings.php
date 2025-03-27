@@ -27,6 +27,9 @@ class UserSettings
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $currency = null;
 
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $timezone = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,6 +67,18 @@ class UserSettings
     public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): static
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }

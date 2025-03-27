@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Expense;
 use App\Entity\ExpenseCategory;
-use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -34,14 +33,22 @@ class ExpenseRepository extends ServiceEntityRepository
 
     public function create($data)
     {
+        /**
+         * @var \App\Entity\User
+         */
         $user = $this->tokenStorage->getToken()->getUser();
         $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category'] ?? '');
-        $timestamp = intval($data['date']) / 1000;
+        $timestamp = intval($data['date']) / 1000.0;
+        $timezone = $user->getUserSettings()->getTimezone();
+        $date = new \DateTime("@$timestamp");
+        if (!is_null($timezone) && !empty($timezone)) {
+            $date->setTimezone(new \DateTimeZone($timezone));
+        }
 
         $expense = new Expense();
         $expense->setAmount($data['amount']);
         $expense->setName($data['name']);
-        $expense->setDate(new DateTime("@$timestamp"));
+        $expense->setDate($date);
         $expense->setUser($user);
         $expense->setExpenseCategory($expenseCategory);
         $expense->setCreated(now());
@@ -64,6 +71,33 @@ class ExpenseRepository extends ServiceEntityRepository
             ->execute();
 
         return $deleted;
+    }
+
+    public function update($data)
+    {
+        /**
+         * @var \App\Entity\User
+         */
+        $user = $this->tokenStorage->getToken()->getUser();
+        $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category'] ?? '');
+        $timestamp = intval($data['date']) / 1000.0;
+        $timezone = $user->getUserSettings()->getTimezone();
+        $date = new \DateTime("@$timestamp");
+        if (!is_null($timezone) && !empty($timezone)) {
+            $date->setTimezone(new \DateTimeZone($timezone));
+        }
+
+        $expense = $this->findOneById($data['id'] ?? -1);
+        $expense?->setAmount($data['amount']);
+        $expense?->setName($data['name']);
+        $expense?->setDate($date);
+        $expense?->setUser($user);
+        $expense?->setExpenseCategory($expenseCategory);
+        $expense?->setCreated(now());
+
+        $this?->getEntityManager()->flush();
+
+        return $expense;
     }
 
     public function createCategory($data)
@@ -89,6 +123,14 @@ class ExpenseRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+    public function findOneById($id)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     //    /**
