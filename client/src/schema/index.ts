@@ -39,6 +39,10 @@ export const incomeFormSchema = z.object({
   date: z.coerce.date(),
 });
 
+export const makeRepeatingFormSchema = z.object({
+  days: z.array(z.string()),
+});
+
 export const settingsFormSchema = z.object({
   currency: z.string(),
 });

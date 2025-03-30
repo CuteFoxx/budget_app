@@ -37,8 +37,6 @@ export default function EditExpenseFormWrapper({
   function onSubmit(values: z.infer<typeof expenseFormSchema>) {
     setPending(true);
 
-    console.log(values.date.getTime());
-
     customFetch(
       "expenses",
       { id: id, ...values, date: values.date.getTime() },

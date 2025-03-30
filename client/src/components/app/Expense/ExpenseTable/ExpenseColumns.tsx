@@ -17,6 +17,8 @@ import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
 import { FormDialog } from "@/components/ui/FormDialog";
 import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
+import MakeRepeatingForm from "../../MakeRepeatingForm";
+import { useState } from "react";
 
 export const ExpenseColumns: ColumnDef<Expense>[] = [
   {
@@ -40,7 +42,6 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
       if (dateRaw == null) {
         return "";
       }
-      console.log(date.getDate());
 
       return <>{date?.toLocaleDateString(userSettings?.language ?? "en-US")}</>;
     },
@@ -109,6 +110,22 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
                     }}
                     id={expense.id}
                   />
+                </FormDialog>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <FormDialog
+                  triggerButton={
+                    <Button variant="ghost" className="w-full p-0">
+                      Make repeating
+                    </Button>
+                  }
+                  title="Edit Expense"
+                >
+                  <MakeRepeatingForm expense={expense} />
                 </FormDialog>
               </DropdownMenuItem>
               <DropdownMenuItem

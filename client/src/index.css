@@ -115,6 +115,11 @@
 }
 
 @layer base {
+  :root {
+    --expense: #bf1029;
+    --income: #3f8f29;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

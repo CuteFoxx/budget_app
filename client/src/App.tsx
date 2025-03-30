@@ -89,7 +89,7 @@ function App() {
           <SideNav />
           <div
             className={`p-4 md:p-8 md:flex-grow ${
-              isMinimized ? "!pl-[6.5rem]" : "!pl-[11.5rem]"
+              isMinimized ? "md:!pl-[6.5rem]" : "md:!pl-[11.5rem]"
             }`}
           >
             <Outlet />

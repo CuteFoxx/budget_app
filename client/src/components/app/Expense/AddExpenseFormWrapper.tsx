@@ -50,7 +50,6 @@ export default function AddExpenseFormWrapper() {
         if (typeof data === "string") {
           data = JSON.parse(data);
         }
-        console.log(data);
 
         dispatch(
           addExpenses(

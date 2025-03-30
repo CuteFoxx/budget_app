@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\PropertyInfo\Tests\Fixtures\DefaultValue;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -67,12 +69,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: IncomeCategory::class, mappedBy: 'user')]
     private Collection $incomeCategories;
 
+    /**
+     * @var Collection<int, ScheduledTask>
+     */
+    #[ORM\OneToMany(targetEntity: ScheduledTask::class, mappedBy: 'user')]
+    private Collection $scheduledTasks;
+
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 2])]
+    private ?int $max_tasks = 2;
+
     public function __construct()
     {
         $this->expenses = new ArrayCollection();
         $this->expenseCategories = new ArrayCollection();
         $this->incomes = new ArrayCollection();
         $this->incomeCategories = new ArrayCollection();
+        $this->scheduledTasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -295,6 +307,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $incomeCategory->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ScheduledTask>
+     */
+    public function getScheduledTasks(): Collection
+    {
+        return $this->scheduledTasks;
+    }
+
+    public function addScheduledTask(ScheduledTask $scheduledTask): static
+    {
+        if (!$this->scheduledTasks->contains($scheduledTask)) {
+            $this->scheduledTasks->add($scheduledTask);
+            $scheduledTask->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScheduledTask(ScheduledTask $scheduledTask): static
+    {
+        if ($this->scheduledTasks->removeElement($scheduledTask)) {
+            // set the owning side to null (unless already changed)
+            if ($scheduledTask->getUser() === $this) {
+                $scheduledTask->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMaxTasks(): ?int
+    {
+        return $this->max_tasks;
+    }
+
+    public function setMaxTasks(int $max_tasks): static
+    {
+        $this->max_tasks = $max_tasks;
 
         return $this;
     }
