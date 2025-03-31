@@ -37,6 +37,7 @@ class ScheduledTaskRepository extends ServiceEntityRepository
         $scheduledTask->setUser($user);
         $scheduledTask->setPayload(json_decode($data['payload'], true));
         $scheduledTask->setRepeatDays($data['days']);
+        $scheduledTask->setType($data['type'] ?? 'none');
 
         $this->getEntityManager()->persist($scheduledTask);
         $this->getEntityManager()->flush();

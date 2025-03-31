@@ -21,7 +21,7 @@ final class TasksSchedule implements ScheduleProviderInterface
 
         return (new Schedule())
             ->add(
-                RecurringMessage::cron('* * * * *', new CreateTasks(1))
+                RecurringMessage::cron('*/1 * * * *', new CreateTasks(1))
                 // @TODO - Create a Message to schedule
                 // RecurringMessage::every('1 hour', new App\Message\Message()),
             )

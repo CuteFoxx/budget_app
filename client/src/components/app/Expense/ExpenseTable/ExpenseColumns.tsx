@@ -17,7 +17,7 @@ import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
 import { FormDialog } from "@/components/ui/FormDialog";
 import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
-import MakeRepeatingForm from "../../MakeRepeatingForm";
+import MakeRepeatingForm from "../../MakeRepeatingExpenseForm";
 import { useState } from "react";
 
 export const ExpenseColumns: ColumnDef<Expense>[] = [
@@ -119,7 +119,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
               >
                 <FormDialog
                   triggerButton={
-                    <Button variant="ghost" className="w-full p-0">
+                    <Button variant="ghost" className="w-full p-0 -ml-1">
                       Make repeating
                     </Button>
                   }

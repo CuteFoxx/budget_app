@@ -4,15 +4,20 @@ namespace App\Repository;
 
 use App\Entity\Income;
 use App\Entity\IncomeCategory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use DateTime;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 /**
  * @extends ServiceEntityRepository<Income>
  */
 class IncomeRepository extends ServiceEntityRepository
 {
+    use ClockAwareTrait;
+
     private TokenStorageInterface $tokenStorage;
 
     private IncomeCategoryRepository $incomeCategoryRepository;
@@ -25,9 +30,9 @@ class IncomeRepository extends ServiceEntityRepository
         $this->incomeCategoryRepository =  $incomeCategoryRepository;
     }
 
-    public function create($data)
+    public function create($data, ?User $User = null)
     {
-        $user = $this->tokenStorage->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()?->getUser() ?? $User;
         $income = new Income();
         $incomeCategory = $this->incomeCategoryRepository->findOneByName($data['category'] ?? '');
         $timestamp = intval($data['date']) / 1000;
@@ -40,6 +45,33 @@ class IncomeRepository extends ServiceEntityRepository
 
         $this->getEntityManager()->persist($income);
         $this->getEntityManager()->flush();
+
+        return $income;
+    }
+
+    public function update($data)
+    {
+        /**
+         * @var \App\Entity\User
+         */
+        $user = $this->tokenStorage->getToken()->getUser();
+        $incomeCategory = $this->incomeCategoryRepository->findOneByName($data['category'] ?? '');
+        $timestamp = intval($data['date']) / 1000.0;
+        $timezone = $user->getUserSettings()->getTimezone();
+        $date = new \DateTime("@$timestamp");
+        if (!is_null($timezone) && !empty($timezone)) {
+            $date->setTimezone(new \DateTimeZone($timezone));
+        }
+
+        $income = $this->findOneById($data['id'] ?? -1);
+        $income?->setAmount($data['amount']);
+        $income?->setName($data['name']);
+        $income?->setDate($date);
+        $income?->setUser($user);
+        $income?->setIncomeCategory($incomeCategory);
+        $income?->setCreated($this->now());
+
+        $this?->getEntityManager()->flush();
 
         return $income;
     }

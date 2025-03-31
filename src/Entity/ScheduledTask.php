@@ -27,6 +27,9 @@ class ScheduledTask
     #[ORM\Column]
     private array $payload = [];
 
+    #[ORM\Column(length: 30)]
+    private ?string $type = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,18 @@ class ScheduledTask
     public function setPayload(array $payload): static
     {
         $this->payload = $payload;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -27,7 +27,7 @@ class UserSettings
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $currency = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
+    #[ORM\Column(length: 30, nullable: true, options: ['default' => "UTC"])]
     private ?string $timezone = null;
 
     public function getId(): ?int

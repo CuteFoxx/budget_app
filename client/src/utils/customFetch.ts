@@ -1,4 +1,5 @@
 import { API_URL } from "@/config";
+import { toast } from "sonner";
 
 export const customFetch = (
   url: string,
@@ -26,10 +27,20 @@ export const customFetch = (
           "Content-Type": "application/json",
         },
       }).then((res) => {
-        if (!res.ok || res.status == 204) {
-          window.location.href = "/login";
-          localStorage.removeItem("loggedIn");
+        if (!res.ok || res.status == 401) {
+          toast("Sesion expired please relogin, redirecting to login page", {
+            position: "top-center",
+          });
+          setTimeout(() => {
+            window.location.href = "/login";
+            localStorage.removeItem("loggedIn");
+          }, 2000);
         }
+
+        toast("Token expired refreshing page", { position: "top-center" });
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
       });
     }
 

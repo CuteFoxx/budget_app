@@ -58,8 +58,30 @@ final class IncomeController extends AbstractController
     public function categoryCreate(Request $request): JsonResponse
     {
         $jsonData = json_decode($request->getContent(), true);
-        $expenseCategory = $this->incomeRepository->createCategory($jsonData);
+        $incomeCategory = $this->incomeRepository->createCategory($jsonData);
 
-        return new JsonResponse($this->serializer->serialize($expenseCategory, 'json',  ['groups' => ['incomeCategories']]));
+        return new JsonResponse($this->serializer->serialize($incomeCategory, 'json',  ['groups' => ['incomeCategories']]));
+    }
+
+    #[Route('api/incomes/categories', methods: ['GET'])]
+    public function categories(): JsonResponse
+    {
+        /**
+         * @var \App\Entity\User
+         */
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        $incomeCategories = $user->getIncomeCategories();
+
+        return $this->json($this->serializer->serialize($incomeCategories, 'json',  ['groups' => ['incomeCategories']]));
+    }
+
+    #[Route('api/incomes', methods: ["PUT"])]
+    public function updateExpense(Request $request): JsonResponse
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        $expense = $this->incomeRepository->update($jsonData);
+
+        return new JsonResponse($this->serializer->serialize($expense, 'json',  ['groups' => ['income']]));
     }
 }

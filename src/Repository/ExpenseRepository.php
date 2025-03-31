@@ -4,10 +4,12 @@ namespace App\Repository;
 
 use App\Entity\Expense;
 use App\Entity\ExpenseCategory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use DateTime;
 
 use function Symfony\Component\Clock\now;
 
@@ -31,16 +33,24 @@ class ExpenseRepository extends ServiceEntityRepository
         $this->logger = $logger;
     }
 
-    public function create($data)
+    public function create($data, ?User $User = null)
     {
         /**
          * @var \App\Entity\User
          */
-        $user = $this->tokenStorage->getToken()->getUser();
-        $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category'] ?? '');
-        $timestamp = intval($data['date']) / 1000.0;
+        $user = $this->tokenStorage->getToken()?->getUser() ?? $User;
         $timezone = $user->getUserSettings()->getTimezone();
-        $date = new \DateTime("@$timestamp");
+        $expenseCategory = $this->expenseCategoryRepository->findOneByName($data['category'] ?? '');
+        $date = null;
+
+        if (!$data['date'] instanceof DateTime) {
+            $timestamp = intval($data['date']) / 1000.0;
+            $date = new \DateTime("@$timestamp");
+        } else {
+            $date = new $data['date'];
+        }
+
+
         if (!is_null($timezone) && !empty($timezone)) {
             $date->setTimezone(new \DateTimeZone($timezone));
         }

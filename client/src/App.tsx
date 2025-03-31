@@ -14,6 +14,7 @@ import {
 import { Toaster } from "sonner";
 import { setCurrencies, setSettings } from "./state/SettingsSlice";
 import { addExpenses, addCategories } from "./state/ExpenseSlice";
+import { addCategories as addIncomeCategories } from "./state/IncomeSlice";
 import { RootState } from "./state/Store";
 import { customFetch } from "./utils/customFetch";
 import { addIncomes } from "./state/IncomeSlice";
@@ -43,6 +44,10 @@ function App() {
   customFetch("expenses/categories", {}, "GET")
     .then((res) => res.json())
     .then((data) => dispatch(addCategories(JSON.parse(data))));
+
+  customFetch("incomes/categories", {}, "GET")
+    .then((res) => res.json())
+    .then((data) => dispatch(addIncomeCategories(JSON.parse(data))));
 
   customFetch("currencies", {}, "GET")
     .then((res) => res.json())

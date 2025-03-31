@@ -12,13 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpenses } from "@/state/ExpenseSlice";
 import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
 import { FormDialog } from "@/components/ui/FormDialog";
-import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
 import { Income } from "@/types/Income";
 import { addIncomes } from "@/state/IncomeSlice";
+import EditIncomeFormWrapper from "../EditIncomeFormWrapper";
 
 export const IncomeColumns: ColumnDef<Income>[] = [
   {
@@ -89,8 +88,13 @@ export const IncomeColumns: ColumnDef<Income>[] = [
                 Actions
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                {/* <FormDialog
+              <DropdownMenuItem
+                asChild
+                // onSelect={(e) => {
+                //   e.preventDefault();
+                // }}
+              >
+                <FormDialog
                   triggerButton={
                     <Button
                       variant="ghost"
@@ -99,18 +103,18 @@ export const IncomeColumns: ColumnDef<Income>[] = [
                       Edit
                     </Button>
                   }
-                  title="Edit Expense"
+                  title="Edit Income"
                 >
-                  <EditExpenseFormWrapper
+                  <EditIncomeFormWrapper
                     defaultValues={{
-                      name: expense.name,
-                      amount: expense.amount,
-                      category: expense?.expenseCategory?.name ?? "",
-                      date: expense.date,
+                      name: income.name,
+                      amount: income.amount,
+                      category: income?.incomeCategory?.name ?? "",
+                      date: income.date,
                     }}
-                    id={expense.id}
+                    id={income.id}
                   />
-                </FormDialog> */}
+                </FormDialog>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500"
