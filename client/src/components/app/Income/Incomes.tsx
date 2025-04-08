@@ -8,24 +8,37 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/state/Store";
 import { IncomeColumns } from "./IncomeTable/IncomeColumns";
 import { Income } from "@/types/Income";
+import DeleteSelected from "./DeleteSelectedIncomes";
 
 function Incomes() {
   const incomes = useSelector((state: RootState) => state.incomes.items);
+  const selectedIncomes = useSelector(
+    (state: RootState) => state.selected.incomes
+  );
+  const selectedIds = selectedIncomes?.map((item) => item.id);
   return (
     <div className="relative">
       <Card>
         <div className="card-heading">
           <h2>Incomes</h2>
-          <FormDialog
-            triggerButton={
-              <Button>
-                Add <Plus />
-              </Button>
-            }
-            title="Add Income"
-          >
-            <AddIncomeFormWrapper />
-          </FormDialog>
+          <div className="flex items-center gap-2">
+            {selectedIncomes.length > 0 ? (
+              <DeleteSelected ids={selectedIds} />
+            ) : (
+              ""
+            )}
+
+            <FormDialog
+              triggerButton={
+                <Button>
+                  Add <Plus />
+                </Button>
+              }
+              title="Add Income"
+            >
+              <AddIncomeFormWrapper />
+            </FormDialog>
+          </div>
         </div>
         <DataTable<Income, Income> columns={IncomeColumns} data={incomes} />
       </Card>

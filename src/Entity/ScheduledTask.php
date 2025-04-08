@@ -5,10 +5,31 @@ namespace App\Entity;
 use App\Repository\ScheduledTaskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Psr\Log\LoggerInterface;
 
 #[ORM\Entity(repositoryClass: ScheduledTaskRepository::class)]
 class ScheduledTask
 {
+    const FREQUENCY_WEEKLY = 'weekly';
+    const FREQUENCY_MONTLY = 'monthly';
+
+    public const FREQUENCIES = [
+        self::FREQUENCY_WEEKLY,
+        self::FREQUENCY_MONTLY,
+    ];
+
+    const TYPE_EXPENSE = 'expense';
+
+    const TYPE_INCOME = 'income';
+
+    const TYPE_SUBSRIPTION = 'subscription';
+
+    public const TYPES = [
+        self::TYPE_EXPENSE,
+        self::TYPE_INCOME,
+        self::TYPE_SUBSRIPTION,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -27,8 +48,12 @@ class ScheduledTask
     #[ORM\Column]
     private array $payload = [];
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     private ?string $type = null;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private string $frequency;
+
 
     public function getId(): ?int
     {
@@ -90,8 +115,28 @@ class ScheduledTask
 
     public function setType(string $type): static
     {
+        if (!in_array($type, self::TYPES)) {
+            throw new \InvalidArgumentException("Invalid type: $type");
+        }
         $this->type = $type;
 
         return $this;
+    }
+
+    public function setFrequency(string $frequency,): self
+    {
+
+        if (!in_array($frequency, self::FREQUENCIES)) {
+            throw new \InvalidArgumentException("Invalid frequency: $frequency");
+        }
+
+        $this->$frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getFrequency(): string
+    {
+        return $this->frequency;
     }
 }

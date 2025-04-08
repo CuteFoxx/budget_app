@@ -139,7 +139,7 @@
   }
 
   .card-heading {
-    @apply flex justify-between items-center gap-2 pb-4 mb-4 border-b-1 dark:border-neutral-800 border-neutral-200;
+    @apply flex justify-between  items-center gap-2 pb-4 mb-4 border-b-1 dark:border-neutral-800 border-neutral-200;
   }
 }
 

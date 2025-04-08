@@ -53,9 +53,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $user,
             $data['password']
         );
-        $usersExists = $this->findOneBy(['email' => $data['email']]);
+        $usersExists = $this?->findOneBy(['email' => $data['email']]) ?? false;
 
-        if ((bool)$usersExists) {
+        if ($usersExists) {
             return "User with this email already exists";
         }
 
@@ -85,8 +85,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 new \DateTime('+1 day'),
                 '/',
                 null,
-                true,
-                true,
+                false,
+                false,
                 false,
                 'none'
             )

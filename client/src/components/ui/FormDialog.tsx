@@ -6,13 +6,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { JSX } from "react";
+import { DialogHTMLAttributes, JSX } from "react";
 
-type FormDialogProps = {
+interface FormDialogProps
+  extends React.HTMLAttributes<DialogHTMLAttributes<HTMLDivElement>> {
   children: React.ReactNode;
   triggerButton: JSX.Element | string;
   title?: string;
-};
+}
 
 export function FormDialog({
   children,

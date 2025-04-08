@@ -29,15 +29,11 @@ class ScheduledTaskRepository extends ServiceEntityRepository
         $user = $this->tokenStorage->getToken()->getUser();
 
         $scheduledTask = new ScheduledTask();
-        $payload = json_decode($data['payload']);
-
-        $this->logger->info('PAYLOAD ->' . $data['payload']);
-
 
         $scheduledTask->setUser($user);
         $scheduledTask->setPayload(json_decode($data['payload'], true));
         $scheduledTask->setRepeatDays($data['days']);
-        $scheduledTask->setType($data['type'] ?? 'none');
+        $scheduledTask->setType($data['type']);
 
         $this->getEntityManager()->persist($scheduledTask);
         $this->getEntityManager()->flush();

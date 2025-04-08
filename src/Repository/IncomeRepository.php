@@ -32,15 +32,32 @@ class IncomeRepository extends ServiceEntityRepository
 
     public function create($data, ?User $User = null)
     {
+        /**
+         * @var \App\Entity\User
+         */
         $user = $this->tokenStorage->getToken()?->getUser() ?? $User;
+        $timezone = $user->getUserSettings()->getTimezone();
         $income = new Income();
         $incomeCategory = $this->incomeCategoryRepository->findOneByName($data['category'] ?? '');
-        $timestamp = intval($data['date']) / 1000;
+        $date = null;
+
+
+        if (!$data['date'] instanceof DateTime) {
+            $timestamp = intval($data['date']) / 1000.0;
+            $date = new \DateTime("@$timestamp");
+        } else {
+            $date = new $data['date'];
+        }
+
+
+        if (!is_null($timezone) && !empty($timezone)) {
+            $date->setTimezone(new \DateTimeZone($timezone));
+        }
 
         $income->setUser($user);
         $income->setAmount($data['amount'] ?? 0);
         $income->setName($data['name'] ?? '');
-        $income->setDate(new \DateTime("@$timestamp"));
+        $income->setDate($date);
         $income->setIncomeCategory($incomeCategory);
 
         $this->getEntityManager()->persist($income);

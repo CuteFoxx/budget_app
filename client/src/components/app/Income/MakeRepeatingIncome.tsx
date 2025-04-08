@@ -7,18 +7,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm, UseFormReturn } from "react-hook-form";
-import { expenseFormSchema, makeRepeatingFormSchema } from "@/schema";
+import { useForm } from "react-hook-form";
+import { makeRepeatingFormSchema } from "@/schema";
 import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MultiSelect } from "./DayMultiSelect";
+import { MultiSelect } from "../DayMultiSelect";
 import { useState } from "react";
 import { customFetch } from "@/utils/customFetch";
 import { toast } from "sonner";
-import { Expense } from "@/types/Expense";
+import { Income } from "@/types/Income";
 
-function MakeRepeatingExpenseForm({ expense }: { expense: Expense }) {
+function MakeRepeatingIncomeForm({ income }: { income: Income }) {
   const [pending, setPending] = useState(false);
   const form = useForm<z.infer<typeof makeRepeatingFormSchema>>({
     resolver: zodResolver(makeRepeatingFormSchema),
@@ -32,8 +32,8 @@ function MakeRepeatingExpenseForm({ expense }: { expense: Expense }) {
 
     customFetch("task", {
       days: values.days,
-      payload: JSON.stringify(expense),
-      type: "expense",
+      payload: JSON.stringify(income),
+      type: "income",
     })
       .then((res) => {
         if (res.ok || res.status === 200) {
@@ -70,4 +70,4 @@ function MakeRepeatingExpenseForm({ expense }: { expense: Expense }) {
   );
 }
 
-export default MakeRepeatingExpenseForm;
+export default MakeRepeatingIncomeForm;

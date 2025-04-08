@@ -25,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
+
     /**
      * @var list<string> The user roles
      */
@@ -77,6 +78,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 2])]
     private ?int $max_tasks = 2;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
+
+
 
     public function __construct()
     {
@@ -350,6 +356,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->max_tasks = $max_tasks;
 
+        return $this;
+    }
+
+    public function isEmailAuthEnabled(): bool
+    {
+        return true; // This can be a persisted field to switch email code authentication on/off
+    }
+
+    public function getEmailAuthRecipient(): string
+    {
+        return $this->email;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $verified): self
+    {
+        $this->isVerified = $verified;
         return $this;
     }
 }

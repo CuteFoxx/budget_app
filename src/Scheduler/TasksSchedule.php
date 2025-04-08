@@ -2,6 +2,7 @@
 
 namespace App\Scheduler;
 
+use App\Repository\ScheduledTaskRepository;
 use App\Scheduler\Message\CreateTasks;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -12,8 +13,11 @@ use Symfony\Contracts\Cache\CacheInterface;
 #[AsSchedule('tasks')]
 final class TasksSchedule implements ScheduleProviderInterface
 {
+
+
     public function __construct(
         private CacheInterface $cache,
+
     ) {}
 
     public function getSchedule(): Schedule

@@ -34,7 +34,11 @@ class CreateTasksHandler
 
     public function __invoke(CreateTasks $message)
     {
-        $tasks = $this->scheduledTask->findAll();
+        $tasks = $message->getTasksForExecution($this->scheduledTask, $this->logger);
+
+        if (empty($tasks)) {
+            return;
+        }
 
         foreach ($tasks as $task) {
             /**
@@ -46,28 +50,22 @@ class CreateTasksHandler
             $userTimeZone = $user->getUserSettings()->getTimezone() ?? 'UTC';
             $timezone = new \DateTimeZone($userTimeZone);
             $date = new \DateTime('now', $timezone);
-            $dayName = $date->format('l');
 
-            $this->logger->info('DAYNAME EXEC ->' . $task->getExecutedAt()->format('l'));
-            $this->logger->info('DAYNAME  ->' . $dayName);
-            $this->logger->info(json_encode($task->getExecutedAt()->format('l') == $dayName));
 
-            if (in_array($dayName, $task->getRepeatDays()) && !($task?->getExecutedAt()->format('l') == $dayName)) {
+            $data = [...$task->getPayload(), 'date' => $date];
 
-                $data = [...$task->getPayload(), 'date' => $date];
-
-                $task?->getType() ?? '' === 'expense' ?
-                    $this->expenseRepository->create([...$data, 'category' => $data['expenseCategory']['name']], $user) :
+            switch ($task->getType()) {
+                case "expense":
+                    $this->expenseRepository->create([...$data, 'category' => $data['expenseCategory']['name']], $user);
+                    break;
+                case "income":
                     $this->incomeRepository->create([...$data, 'category' => $data['incomeCategory']['name']], $user);
-
-                $task->setExecutedAt($date);
+                    break;
             }
 
-            if (is_null($task->getExecutedAt())) {
-                $task->setExecutedAt($date);
-            }
+            $task->setExecutedAt($date);
+
             $this->taskRepository->getEntityManager()->flush();
         }
-        // ... do some work to send the report to the customers
     }
 }

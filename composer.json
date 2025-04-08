@@ -21,6 +21,7 @@
     "symfony/dotenv": "7.2.*",
     "symfony/flex": "^2.5",
     "symfony/framework-bundle": "7.2.*",
+    "symfony/mailer": "7.2.*",
     "symfony/messenger": "7.2.*",
     "symfony/monolog-bundle": "^3.10",
     "symfony/property-access": "7.2.*",
@@ -28,7 +29,9 @@
     "symfony/runtime": "7.2.*",
     "symfony/scheduler": "7.2.*",
     "symfony/serializer": "7.2.*",
-    "symfony/yaml": "7.2.*"
+    "symfony/twig-bridge": "*",
+    "symfony/yaml": "7.2.*",
+    "symfonycasts/verify-email-bundle": "*"
   },
   "config": {
     "allow-plugins": {

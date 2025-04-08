@@ -17,10 +17,50 @@ import { RootState } from "@/state/Store";
 import { customFetch } from "@/utils/customFetch";
 import { FormDialog } from "@/components/ui/FormDialog";
 import EditExpenseFormWrapper from "../EditExpenseFormWrapper";
-import MakeRepeatingForm from "../../MakeRepeatingExpenseForm";
-import { useState } from "react";
+import MakeRepeatingForm from "../MakeRepeatingExpenseForm";
+import { useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { addSelectedExpenses } from "@/state/SelectedItemsSlice";
 
 export const ExpenseColumns: ColumnDef<Expense>[] = [
+  {
+    id: "select",
+    header: ({ table }) => {
+      const expenses = useSelector((state: RootState) => state.expenses.items);
+      const dispatch = useDispatch();
+      const selected = table.getSelectedRowModel().rows;
+      useEffect(() => {
+        let items = selected.map((item) => item.original);
+        dispatch(addSelectedExpenses(items));
+      }, [selected]);
+
+      useEffect(() => {
+        table.toggleAllPageRowsSelected(false);
+      }, [expenses]);
+
+      return (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => {
+            return table.toggleAllPageRowsSelected(!!value);
+          }}
+          aria-label="Select all"
+        />
+      );
+    },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "name",
     header: "Name",
@@ -123,7 +163,7 @@ export const ExpenseColumns: ColumnDef<Expense>[] = [
                       Make repeating
                     </Button>
                   }
-                  title="Edit Expense"
+                  title="Make repeating"
                 >
                   <MakeRepeatingForm expense={expense} />
                 </FormDialog>

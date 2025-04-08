@@ -18,8 +18,50 @@ import { FormDialog } from "@/components/ui/FormDialog";
 import { Income } from "@/types/Income";
 import { addIncomes } from "@/state/IncomeSlice";
 import EditIncomeFormWrapper from "../EditIncomeFormWrapper";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect } from "react";
+import { addSelectedIncomes } from "@/state/SelectedItemsSlice";
+import MakeRepeatingIncomeForm from "../MakeRepeatingIncome";
 
 export const IncomeColumns: ColumnDef<Income>[] = [
+  {
+    id: "select",
+    header: ({ table }) => {
+      const incomes = useSelector((state: RootState) => state.incomes.items);
+      const dispatch = useDispatch();
+      const selected = table.getSelectedRowModel().rows;
+      useEffect(() => {
+        let items = selected.map((item) => item.original);
+        dispatch(addSelectedIncomes(items));
+      }, [selected]);
+
+      useEffect(() => {
+        table.toggleAllPageRowsSelected(false);
+      }, [incomes]);
+
+      return (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => {
+            return table.toggleAllPageRowsSelected(!!value);
+          }}
+          aria-label="Select all"
+        />
+      );
+    },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "name",
     header: "Name",
@@ -114,6 +156,22 @@ export const IncomeColumns: ColumnDef<Income>[] = [
                     }}
                     id={income.id}
                   />
+                </FormDialog>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <FormDialog
+                  triggerButton={
+                    <Button variant="ghost" className="w-full p-0 -ml-1">
+                      Make repeating
+                    </Button>
+                  }
+                  title="Make repeating"
+                >
+                  <MakeRepeatingIncomeForm income={income} />
                 </FormDialog>
               </DropdownMenuItem>
               <DropdownMenuItem

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/passwordInput";
+import { API_URL } from "@/config";
 import { loginFormSchema } from "@/schema";
 import { customFetch } from "@/utils/customFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,13 +35,27 @@ function Login() {
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
     setPending(true);
 
-    customFetch(`login_check`, {
-      username: values.email,
-      password: values.password,
-    }).then((response) => {
-      if (response.ok) {
+    fetch(`${API_URL}/login_check`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: values.email,
+        password: values.password,
+      }),
+    }).then((res) => {
+      if (res.ok) {
         navigate("/app");
+      } else if (res.status == 401) {
+        form.setError("root", {
+          message: "Please confirm your email in order to log in",
+        });
+        setPending(false);
       }
+
+      return res.json();
     });
   }
 
@@ -79,14 +94,15 @@ function Login() {
             <Button disabled={pending} type="submit">
               {pending ? <LoaderCircle className="animate-spin" /> : "Submit"}
             </Button>
+            <FormMessage>{form.formState.errors.root?.message}</FormMessage>
           </form>
         </Form>
 
         <div>
           <p>
-            Dont haven an account?{" "}
+            Dont have an account?
             <Link
-              className="text-purple-500 underline hover:no-underline"
+              className="text-purple-500 underline hover:no-underline ml-1"
               to="/registration"
             >
               Sign up
